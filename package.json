@@ -1,0 +1,34 @@
+{
+  "name": "bill-electronics",
+  "version": "0.1.0",
+  "description": "Factura Electronica (SRI)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/A-F-V-A/Bill-Electronics.git"
+  },
+  "keywords": [
+    "Factura",
+    "Firma",
+    "xlm",
+    "json",
+    "js"
+  ],
+  "author": "AFVA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/A-F-V-A/Bill-Electronics/issues"
+  },
+  "homepage": "https://github.com/A-F-V-A/Bill-Electronics#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.3"
+  }
+}
