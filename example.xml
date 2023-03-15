@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<factura id="comprobante" version="1.1.0">
+    <infoTributaria>
+        <ambiente>2</ambiente>
+        <tipoEmision>1</tipoEmision>
+        <razonSocial>RAZÓN SOCIAL DEL EMISOR</razonSocial>
+        <nombreComercial>NOMBRE COMERCIAL DEL EMISOR</nombreComercial>
+        <ruc>RUC DEL EMISOR</ruc>
+        <claveAcceso>CLAVE DE ACCESO DE 49 CARACTERES</claveAcceso>
+        <codDoc>01</codDoc>
+        <estab>001</estab>
+        <ptoEmi>001</ptoEmi>
+        <secuencial>000001001</secuencial>
+        <dirMatriz>DIRECCIÓN MATRIZ DEL EMISOR</dirMatriz>
+    </infoTributaria>
+    <infoFactura>
+        <fechaEmision>FECHA DE EMISIÓN DE LA FACTURA EN FORMATO DD/MM/YYYY</fechaEmision>
+        <dirEstablecimiento>DIRECCIÓN DEL ESTABLECIMIENTO</dirEstablecimiento>
+        <contribuyenteEspecial>NO</contribuyenteEspecial>
+        <obligadoContabilidad>SI</obligadoContabilidad>
+        <tipoIdentificacionComprador>04</tipoIdentificacionComprador>
+        <razonSocialComprador>NOMBRE O RAZÓN SOCIAL DEL COMPRADOR</razonSocialComprador>
+        <identificacionComprador>IDENTIFICACIÓN DEL COMPRADOR</identificacionComprador>
+        <totalSinImpuestos>0.00</totalSinImpuestos>
+        <totalDescuento>0.00</totalDescuento>
+        <totalConImpuestos>
+            <totalImpuesto>
+                <codigo>2</codigo>
+                <codigoPorcentaje>0</codigoPorcentaje>
+                <baseImponible>0.00</baseImponible>
+                <valor>0.00</valor>
+            </totalImpuesto>
+        </totalConImpuestos>
+        <propina>0.00</propina>
+        <importeTotal>0.00</importeTotal>
+        <moneda>DÓLAR</moneda>
+    </infoFactura>
+    <detalles>
+        <detalle>
+            <codigoPrincipal>CÓDIGO PRINCIPAL DEL PRODUCTO O SERVICIO</codigoPrincipal>
+            <descripcion>DESCRIPCIÓN DEL PRODUCTO O SERVICIO</descripcion>
+            <cantidad>1.00</cantidad>
+            <precioUnitario>0.00</precioUnitario>
+            <descuento>0.00</descuento>
+            <precioTotalSinImpuesto>0.00</precioTotalSinImpuesto>
+            <impuestos>
+                <impuesto>
+                    <codigo>2</codigo>
+                    <codigoPorcentaje>0</codigoPorcentaje>
+                    <tarifa>0.00</tarifa>
+                    <baseImponible>0.00</baseImponible>
+                    <valor>0.00</valor>
+                </impuesto>
+            </impuestos>
+        </detalle>
+    </detalles>
+    <infoAdicional>
+        <campoAdicional nombre="Lugar Entrega">LUGAR DE ENTREGA DEL PRODUCTO O SERVICIO</campoAdicional>
+        <campoAdicional nombre="Observaciones">OBSERVACIONES ADICIONALES</campoAdicional>
+</infoAdicional>
+</factura>
+
+
