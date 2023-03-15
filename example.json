@@ -1,0 +1,49 @@
+{
+    "details": {
+      "fechaEmision": "FECHA DE EMISIÓN DE LA FACTURA EN FORMATO DD/MM/YYYY",
+      "dirEstablecimiento": "DIRECCIÓN DEL ESTABLECIMIENTO",
+      "contribuyenteEspecial": "NO",
+      "obligadoContabilidad": "SI",
+      "tipoIdentificacionComprador": "04",
+      "razonSocialComprador": "NOMBRE O RAZÓN SOCIAL DEL COMPRADOR",
+      "identificacionComprador": "IDENTIFICACIÓN DEL COMPRADOR",
+      "totalSinImpuestos": "0.00",
+      "totalDescuento": "0.00",
+      "propina": "0.00",
+      "importeTotal": "0.00",
+      "moneda": "DÓLAR"
+    },
+    "tax": {
+      "ambiente": "aa",
+      "tipoEmision": "ss",
+      "razonSocial": "ll",
+      "nombreComercial": "ff",
+      "ruc": "kk",
+      "claveAcceso": "gg",
+      "codDoc": "jj",
+      "estab": "o",
+      "ptoEmi": "g",
+      "secuencial": "yy",
+      "dirMatriz": "bvv"
+    },
+    "product": [
+      {
+        "cantidad": "1",
+        "descripcion": "PRODUCTOS ELECTRONICOS",
+        "preciou": "10",
+        "nombre": "Marketing FB",
+        "cantidad_descuento": "0.05",
+        "iva": "0",
+        "codigos_impuestos": "2"
+      },
+          {
+        "cantidad": "1",
+        "descripcion": "PRODUCTOS ELECTRONICOS",
+        "preciou": "10",
+        "nombre": "Marketing FB",
+        "cantidad_descuento": "0.05",
+        "iva": "0",
+        "codigos_impuestos": "2"
+      }
+    ]
+  }
