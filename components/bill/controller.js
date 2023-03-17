@@ -1,109 +1,7 @@
-const { model } = require('mongoose');
-const { create } = require('xmlbuilder2');
-
-const xlm2 = ({product, tax, details}) => {
-
-    //Informalcion Tributaria
-    const {
-        ambiente,
-        tipoEmision,
-        razonSocial, 
-        nombreComercial,
-        ruc,
-        claveAcceso,
-        codDoc,
-        estab, 
-        ptoEmi,
-        secuencial,
-        dirMatriz,
-    } = tax
-    
-    //Detalle de la factura
-    const {
-        fechaEmision,
-        dirEstablecimiento,
-        contribuyenteEspecial, 
-        obligadoContabilidad,
-        tipoIdentificacionComprador,
-        razonSocialComprador,
-        identificacionComprador,
-        totalSinImpuestos, 
-        totalDescuento,
-        propina,
-        importeTotal,
-        moneda
-    } = details
-    const root = create({ 
-        version: '1.0' , 
-        encoding: "UTF-8"
-    })
-    .ele('factura', { id: 'val', version:"1.1.0" })
-    .ele('infoTributaria')
-        .ele('ambiente').txt(ambiente).up()
-        .ele('tipoEmision').txt(tipoEmision).up()
-        .ele('razonSocial').txt(razonSocial).up()
-        .ele('nombreComercial').txt(nombreComercial).up()
-        .ele('ruc').txt(ruc).up()
-        .ele('claveAcceso').txt(claveAcceso).up()
-        .ele('codDoc').txt(codDoc).up()
-        .ele('estab').txt(estab).up()
-        .ele('ptoEmi').txt(ptoEmi).up()
-        .ele('secuencial').txt(secuencial).up()
-        .ele('dirMatriz').txt(dirMatriz).up()
-    .up()
-    .ele('  ')
-        .ele('fechaEmision').txt(fechaEmision).up()
-        .ele('dirEstablecimiento').txt(dirEstablecimiento).up()
-        .ele('contribuyenteEspecial').txt(contribuyenteEspecial).up()
-        .ele('obligadoContabilidad').txt(obligadoContabilidad).up()
-        .ele('tipoIdentificacionComprador').txt(tipoIdentificacionComprador).up()
-        .ele('razonSocialComprador').txt(razonSocialComprador).up()
-        .ele('identificacionComprador').txt(identificacionComprador).up()
-        .ele('totalSinImpuestos').txt(totalSinImpuestos).up()
-        .ele('totalDescuento').txt(totalDescuento).up()
-        .ele('totalConImpuestos')
-        .ele('totalImpuesto')
-        .ele('codigo').txt('2').up()
-        .ele('codigoPorcentaje').txt('2').up()
-        .ele('baseImponible').txt('2').up()
-        .ele('valor').txt('2').up()
-            .up()
-        .up()
-        .ele('totalConImpuestos')
-            .ele('propina').txt('2').up()
-            .ele('importeTotal').txt('2').up()
-            .ele('DÓLAR').txt('2').up() 
-        .up()
-    .up()
-    .ele('detalles')
-        .ele('detalle')
-            .ele('codigoPrincipal').txt('2').up()
-            .ele('descripcion').txt('2').up()
-            .ele('cantidad').txt('2').up()
-            .ele('precioUnitario').txt('2').up()
-            .ele('descuento').txt('2').up()
-            .ele('precioTotalSinImpuesto').txt('2').up()
-            .ele('impuestos')
-                .ele('impuesto')
-                    .ele('codigo').txt('2').up()
-                    .ele('codigoPorcentaje').txt('2').up()
-                    .ele('tarifa').txt('2').up()
-                    .ele('baseImponible').txt('2').up()
-                    .ele('valor').txt('2').up()
-                .up()
-            .up()
-        .up()
-    .up()
-    .ele('infoAdicional')
-        .ele('campoAdicional').txt('2').up()
-        .ele('campoAdicional').txt('2').up()
-    .up()
-.up();
-
-    const x = root.end({ prettyPrint: true });
-    console.log(x);
-    return x
-}
+const { model } = require('mongoose')
+const fs        = require('fs')
+const pdf       = require('pdf-creator-node')
+const path      = require('path')
 
 
 const xlmBill = ({tax, details,product}) =>{
@@ -218,6 +116,32 @@ const xlmBill = ({tax, details,product}) =>{
 const invoiceData = (bill) =>{
 
     return xlmBill(bill)    
+}
+
+const generetePdf = () =>{
+    const opt = {
+        formate: 'A3',
+        orientation: 'portrait',
+        border: '2mm',
+        header: {
+            height: '15mm',
+            contents: '<h4 style=" color: red;font-size:20;font-weight:800;text-align:center;">CUSTOMER INVOICE</h4>'
+        },
+        footer: {
+            height: '20mm',
+            contents: {
+                first: 'Cover page',
+                2: 'Second page',
+                default: '<span style="color: #444;">{{page}}</span>/<span>{{pages}}</span>', 
+                last: 'Last Page'
+            }
+        }
+    }
+    const html = fs.writeFileSync(
+        path.join(__dirname,'../template/templete.html'),
+        'utf-8'
+    )
+    const pdfName = Math.random() + '_doc.pdf'
 }
 
 
