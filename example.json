@@ -34,16 +34,58 @@
         "nombre": "Marketing FB",
         "cantidad_descuento": "0.05",
         "iva": "0",
-        "codigos_impuestos": "2"
+        "codigos_impuestos": "2",
+        "code":"p01572",
+        "quantity":"1.00",
+        "description":"Acer Predator Orion PO3-630-UR12",
+        "additional_details":"",
+        "unit_Price":"1.700.00",
+        "discount":""
       },
-          {
+      {
         "cantidad": "1",
         "descripcion": "PRODUCTOS ELECTRONICOS",
         "preciou": "10",
         "nombre": "Marketing FB",
         "cantidad_descuento": "0.05",
         "iva": "0",
-        "codigos_impuestos": "2"
+        "codigos_impuestos": "2",
+        "code":"p0100",
+        "quantity":"1.00",
+        "description":"CPU HP OMEN I7-11700F 32GB 1TB NVIDIA RTX 3060 12GB 12GB",
+        "additional_details":"",
+        "unit_Price":"1.650.00",
+        "discount":""
+      },
+      {
+        "cantidad": "1",
+        "descripcion": "PRODUCTOS ELECTRONICOS",
+        "preciou": "10",
+        "nombre": "Marketing FB",
+        "cantidad_descuento": "0.05",
+        "iva": "0",
+        "codigos_impuestos": "2",
+        "code":"P02001",
+        "quantity":"2.00",
+        "description":"EVGA Supernova 1600 P+,80+ Platinum 1600W",
+        "additional_details":"",
+        "unit_Price":"365.00",
+        "discount":""
+      },
+      {
+        "cantidad": "1",
+        "descripcion": "PRODUCTOS ELECTRONICOS",
+        "preciou": "10",
+        "nombre": "Marketing FB",
+        "cantidad_descuento": "0.05",
+        "iva": "0",
+        "codigos_impuestos": "2",
+        "code":"P056",
+        "quantity":"2.00",
+        "description":"MSI GF65 10UE-213US GAMING LAPTOP",
+        "additional_details":"",
+        "unit_Price":"990.00",
+        "discount":""
       }
     ]
   }

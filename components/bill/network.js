@@ -1,9 +1,6 @@
 // Modulos
-const express = require('express')
-
+const express    = require('express')
 const controller = require('./controller')
-
-
 
 // Logic
 const router    = express.Router()
@@ -14,9 +11,7 @@ router.get('/',(req,res) =>{
 
 
 router.post('/',(req,res) =>{
-   // console.log(req.body)
-    res.type('application/xml');
-    
+    res.type('application/xml');    
     res.send(controller.invoiceData(req.body))
 })
 

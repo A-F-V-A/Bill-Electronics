@@ -6,11 +6,13 @@ if(process.env.NODE_ENV !== 'production')
 const express    = require('express')
 const bodyParser = require('body-parser')
 const router     = require('./network/routes')
+const layouts    = require('express-ejs-layouts')
 
 // Logic
 
 const app = express()
 
+app.use(layouts)
 app.use(bodyParser.json())
 app.use('/app',express.static('public'))
 router(app)
