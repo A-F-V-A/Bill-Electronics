@@ -1,11 +1,91 @@
 /* Modules */
 const { model }     = require('mongoose')
-const fs            = require('fs')
 const { pdfBill }   = require('../pdf/controller')
+const fs            = require('fs')
+const path          = require('path')
+const forge         = require ( 'node-forge' ) ;
 
 
 
 /* Logic */
+
+
+const singXml = () =>{
+
+    //Funcion de utilidad
+
+    const sha1_base64 = value =>{
+        const md = forge.md.sha1.create()
+        md.update(value)
+        return Buffer.from(md.digest().toHex(), 'hex').toString('base64')
+    }
+
+    const hexToBase64 = str => {
+        let hex = ('00' + str).slice(0 - str.length - str.length % 2);
+        
+        return btoa(String.fromCharCode.apply(null,
+            hex.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" "))
+        );
+    }
+    
+    const bigint2base64 = bigint => {
+        let base64 = '';
+        base64 = btoa(bigint.toString(16).match(/\w{2}/g).map(function(a){return String.fromCharCode(parseInt(a, 16));} ).join(""));
+        
+        base64 = base64.match(/.{1,76}/g).join("\n");
+        
+        return base64;
+    }
+
+
+    const PASSWORD = ''
+    const SINGP12 = fs.readFileSync(path.join(__dirname,`../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
+    const arrayUint8 = new Uint8Array(SINGP12)
+    const p12B64     = forge.util.binary.base64.encode(arrayUint8)
+    const p12Der     = forge.util.decode64(p12B64)
+    const p12Asn1    = forge.asn1.fromDer(p12Der)
+
+    const P12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1,PASSWORD)
+
+
+    const certBags = P12.getBags({bagType:forge.pki.oids.certBag})
+    const cert = certBags[forge.oids.certBag][0].cert;
+    const pkcs8bags = P12.getBags({bagType:forge.pki.oids.pkcs8ShroudedKeyBag})
+    const pkcs8 = pkcs8bags[forge.oids.pkcs8ShroudedKeyBag][0]
+    const key = pkcs8.key
+
+    if( key == null ) key = pkcs8.asn1
+    
+    const certificateX509_pem  = forge.pki.certificateToPem(cert)
+
+    let certificateX509 = certificateX509_pem;
+
+    certificateX509 = certificateX509.substring( certificateX509.indexOf('\n') )
+    certificateX509 = certificateX509.substring( 0, certificateX509.indexOf('\n-----END CERTIFICATE-----') )
+
+    certificateX509 = certificateX509.replace(/\r?\n|\r/g, '').replace(/([^\0]{76})/g, '$1\n')
+
+    /*
+        *Obtener hast
+        *Pasar certificado a formato DER y sacar su hash:
+    */
+    let certificateX509_asn1 = forge.pki.certificateToAsn1(cert)
+    let certificateX509_der = forge.asn1.toDer(certificateX509_asn1).getBytes()
+
+
+
+
+    let certificateX509_der_hash = sha1_base64(certificateX509_der)
+
+    //Serial Number
+    const  X509SerialNumber = parseInt(cert.serialNumber, 16)
+
+    let exponent = hexToBase64(key.e.data[0].toString(16))          
+    let modulus  = bigint2base64(key.n)
+
+    console.log(X509SerialNumber,exponent,modulus,certificateX509_der_hash)
+}
+
 
 const xlmBill = ({tax, details,product}) =>{
     //Informalcion Tributaria
@@ -38,6 +118,7 @@ const xlmBill = ({tax, details,product}) =>{
         importeTotal,
         moneda
     } = details
+    singXml()
     let xlm = `
         <?xml version="1.0" encoding="UTF-8"?>
         <factura id="${1005}" version="1.1.0">
