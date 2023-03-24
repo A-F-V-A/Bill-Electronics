@@ -13,33 +13,32 @@ const invoiceData = async data =>{
     const [xml, key]  =  createXMl(data)
     const sing =  singXml(xml)
 
-    console.log(sing)
     
     let state = ''
 
     const send = {
-        xml: Buffer.from(sing).toString('base64')
+        xml: Buffer.from(sing).toString('base64') //Buffer.from(sing).toString('base64')
     }
 
 
-     soap.createClient(URL.VALIDATE, async (err,client) =>{
+    await soap.createClient(URL.VALIDATE, async (err,client) =>{
         if(err)
             console.error(err)
         
-        await client.validarComprobante(send, (err,res) =>{
+        await client.validarComprobante(send, async (err,res) =>{
             console.log('Validar comprobante')
-            console.log(res)
+            console.log(res, res.RespuestaRecepcionComprobante.comprobante?.comprobante)
 
             let { estado } = res.RespuestaRecepcionComprobante
-console.log(estado)
+            console.log(estado)
             if(estado == 'RECIBIDA'){
                 const sendR = {
                     claveAccesoComprobante:key.toString()
                 }
-                soap.createClient(URL.ACTORIZE, async (errTwo,clientTwo)=>{
+                await soap.createClient(URL.AUTHORIZE, async (errTwo,clientTwo)=>{
                     if(errTwo)
                         console.error(errTwo)
-                       await clientTwo.autorizacionComprobante(sendR,(twoErr,resTwo) =>{
+                        await clientTwo.autorizacionComprobante(sendR,(twoErr,resTwo) =>{
                             console.log('Autorizar comprobante')
                             if(twoErr)
                                 console.error(twoErr)

@@ -55,7 +55,7 @@ function generarSerie () {
     }
     return numero; 
 }
-  
+
 function accessKey(data,dete){
 
     const {comprobante,ruc} = data.details

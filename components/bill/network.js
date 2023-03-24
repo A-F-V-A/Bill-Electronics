@@ -10,9 +10,9 @@ router.get('/',(req,res) =>{
 })
 
 
-router.post('/',(req,res) =>{
+router.post('/', async (req,res) =>{
     res.type('application/xml');    
-    res.send(controller.invoiceData(req.body))
+    res.send( await controller.invoiceData(req.body))
 })
 
 
