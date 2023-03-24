@@ -1,91 +1,68 @@
 {
-    "details": {
-      "fechaEmision": "FECHA DE EMISIÓN DE LA FACTURA EN FORMATO DD/MM/YYYY",
-      "dirEstablecimiento": "DIRECCIÓN DEL ESTABLECIMIENTO",
-      "contribuyenteEspecial": "NO",
-      "obligadoContabilidad": "SI",
-      "tipoIdentificacionComprador": "04",
-      "razonSocialComprador": "NOMBRE O RAZÓN SOCIAL DEL COMPRADOR",
-      "identificacionComprador": "IDENTIFICACIÓN DEL COMPRADOR",
-      "totalSinImpuestos": "0.00",
-      "totalDescuento": "0.00",
-      "propina": "0.00",
-      "importeTotal": "0.00",
-      "moneda": "DÓLAR"
+  "details": {
+    "razonSocial": "PAUL JARAMILLO",
+    "nombreComercial": "PAUL JARAMILLO",
+    "ruc": "0704870708001",
+    "direccion": "Enrique Guerrero Portilla OE1-34 AV. Galo Plaza Lasso",
+    "comprobante": "05"
+  },
+  "customer": {
+    "tipoDocumento": "2",
+    "id": "1004870232",
+    "razonSocial": "ANDRES FELIPE VILLARRAGA ARANGO"
+  },
+  "tax": {
+    "codigoTax": "2",
+    "tarifa": "0",
+    "imponible": "9.95",
+    "valor": "0",
+    "moneda": "DOLAR",
+    "propina": "0.00"
+  },
+  "product": [
+    {
+      "iva": "2",
+      "codigos_impuestos": "0",
+      "tarifa": "5",
+      "code": "p01572",
+      "quantity": "1.00",
+      "description": "Acer Predator Orion PO3-630-UR12",
+      "additional_details": "",
+      "unit_Price": "1.700.00",
+      "discount": ""
     },
-    "tax": {
-      "ambiente": "aa",
-      "tipoEmision": "ss",
-      "razonSocial": "ll",
-      "nombreComercial": "ff",
-      "ruc": "kk",
-      "claveAcceso": "gg",
-      "codDoc": "jj",
-      "estab": "o",
-      "ptoEmi": "g",
-      "secuencial": "yy",
-      "dirMatriz": "bvv"
+    {
+      "iva": "2",
+      "codigos_impuestos": "0",
+      "tarifa": "5",
+      "code": "p0100",
+      "quantity": "1.00",
+      "description": "CPU HP OMEN I7-11700F 32GB 1TB NVIDIA RTX 3060 12GB 12GB",
+      "additional_details": "",
+      "unit_Price": "1.650.00",
+      "discount": ""
     },
-    "product": [
-      {
-        "cantidad": "1",
-        "descripcion": "PRODUCTOS ELECTRONICOS",
-        "preciou": "10",
-        "nombre": "Marketing FB",
-        "cantidad_descuento": "0.05",
-        "iva": "0",
-        "codigos_impuestos": "2",
-        "code":"p01572",
-        "quantity":"1.00",
-        "description":"Acer Predator Orion PO3-630-UR12",
-        "additional_details":"",
-        "unit_Price":"1.700.00",
-        "discount":""
-      },
-      {
-        "cantidad": "1",
-        "descripcion": "PRODUCTOS ELECTRONICOS",
-        "preciou": "10",
-        "nombre": "Marketing FB",
-        "cantidad_descuento": "0.05",
-        "iva": "0",
-        "codigos_impuestos": "2",
-        "code":"p0100",
-        "quantity":"1.00",
-        "description":"CPU HP OMEN I7-11700F 32GB 1TB NVIDIA RTX 3060 12GB 12GB",
-        "additional_details":"",
-        "unit_Price":"1.650.00",
-        "discount":""
-      },
-      {
-        "cantidad": "1",
-        "descripcion": "PRODUCTOS ELECTRONICOS",
-        "preciou": "10",
-        "nombre": "Marketing FB",
-        "cantidad_descuento": "0.05",
-        "iva": "0",
-        "codigos_impuestos": "2",
-        "code":"P02001",
-        "quantity":"2.00",
-        "description":"EVGA Supernova 1600 P+,80+ Platinum 1600W",
-        "additional_details":"",
-        "unit_Price":"365.00",
-        "discount":""
-      },
-      {
-        "cantidad": "1",
-        "descripcion": "PRODUCTOS ELECTRONICOS",
-        "preciou": "10",
-        "nombre": "Marketing FB",
-        "cantidad_descuento": "0.05",
-        "iva": "0",
-        "codigos_impuestos": "2",
-        "code":"P056",
-        "quantity":"2.00",
-        "description":"MSI GF65 10UE-213US GAMING LAPTOP",
-        "additional_details":"",
-        "unit_Price":"990.00",
-        "discount":""
-      }
-    ]
-  }
+    {
+      "iva": "2",
+      "codigos_impuestos": "0",
+      "tarifa": "5",
+      "code": "P02001",
+      "quantity": "2.00",
+      "description": "EVGA Supernova 1600 P+,80+ Platinum 1600W",
+      "additional_details": "",
+      "unit_Price": "365.00",
+      "discount": ""
+    },
+    {
+      "iva": "2",
+      "codigos_impuestos": "0",
+      "tarifa": "5",
+      "code": "P056",
+      "quantity": "2.00",
+      "description": "MSI GF65 10UE-213US GAMING LAPTOP",
+      "additional_details": "",
+      "unit_Price": "990.00",
+      "discount": ""
+    }
+  ]
+}

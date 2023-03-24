@@ -1,14 +1,179 @@
 /* Modules */
-const { model }     = require('mongoose')
-const { pdfBill }   = require('../pdf/controller')
-const { invoiceData }   = require('../webServices/controller')
 const fs            = require('fs')
-const path          = require('path')
 const forge         = require ( 'node-forge' ) ;
+const path          = require('path')
 const moment        = require('moment'); 
 
+/* Component */
+const { pdfBill }   = require('../pdf/controller')
 
-/* Logic */
+
+const AMBIENTE = 1
+
+function generarCodigo() {
+    let codigo = '';
+    for (let i = 0; i < 8; i++) {
+      codigo += Math.floor(Math.random() * 10);
+    }
+    return codigo;
+}
+
+function generarSecuencial(id) {
+    // Obtener el número del secuencial a partir de la cadena de entrada
+    const numero = parseInt(id.slice(-9)) + 1
+    
+    // Convertir el número a una cadena de texto y agregar ceros a la izquierda si es necesario
+    const numeroConCeros = numero.toString().padStart(9, '0')
+    
+    // Crear el secuencial concatenando la parte inicial de la cadena de entrada con el número del secuencial
+    const secuencial = id.slice(0, -9) + numeroConCeros
+    
+    return secuencial
+}
+
+function calcularDigitoVerificador(claveAcceso) {
+    let suma = 0;
+    let factor = 2;
+  
+    for (let i = claveAcceso.length - 1; i >= 0; i--) {
+      suma += claveAcceso[i] * factor;
+      factor = factor === 7 ? 2 : factor + 1;
+    }
+  
+    const mod = suma % 11 
+    const final = 11 - mod
+    const dv = final === 11 ? 0 : final === 10 ? 1: final
+
+    return dv.toString();
+}
+
+function generarSerie () {
+    const longitud = 6;
+    let numero = '';
+    for (let i = 0; i < longitud; i++) {
+    numero += Math.floor(Math.random() * 10); // Generar un dígito aleatorio del 0 al 9
+    }
+    return numero; 
+}
+  
+function accessKey(data,dete){
+
+    const {comprobante,ruc} = data.details
+
+    let key = dete.toString().replace(/\//g,'')
+    //Tipo de comprobante
+    key += 
+        comprobante.toString() + ruc.toString() + 
+        AMBIENTE.toString() + generarSerie() + 
+        generarSecuencial('000000000') + generarCodigo() + '1'
+
+    return key + calcularDigitoVerificador(key.toString())
+}
+
+const createXMl = data =>{
+
+    console.log(data)
+    const dete = moment().format('DD/MM/YYYY') //fecha de emision
+    const secuencial = generarSecuencial('000000000') //Genera el secuencial alatorio
+    const key = accessKey(data,dete)
+
+
+    //Dinamico precios
+    const totalValue = (obj, key = 'total') => {
+        let total = 0
+        obj.forEach(f => total += parseFloat(f[`${key}`].toString()))
+        return total.toFixed(2)
+    }
+
+    const table = []
+    
+    //Se crea el objeto de los productos dinamicos
+    data.product.forEach(d =>{
+        const total = ( parseInt(d.quantity) * parseFloat(d.unit_Price) ) - parseFloat(d.discount == '' ? '0': d.discount) 
+        table.push({       
+            code                : d.code,
+            quantity            : d.quantity,
+            description         : d.description,
+            additional_details  : d.additional_details,
+            unit_Price          : d.unit_Price,
+            discount            : d.discount == '' ? '0.00' : d.discount,
+            total               : total.toFixed(2),
+            iva                 : d.iva,
+            codigos_impuestos   : d.codigos_impuestos,
+            tarifa              : d.tarifa
+        })  
+    })
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>
+        <factura id="comprobante" version="1.0.0">
+            <infoTributaria>
+                <ambiente>${AMBIENTE}</ambiente>
+                <tipoEmision>1</tipoEmision>
+                <razonSocial>${data.details.razonSocial}</razonSocial>
+                <nombreComercial>${data.details.nombreComercial}</nombreComercial>
+                <ruc>${data.details.ruc}</ruc>
+                <claveAcceso>${key}</claveAcceso>
+                <codDoc>01</codDoc>
+                <estab>001</estab>
+                <ptoEmi>001</ptoEmi>
+                <secuencial>${secuencial}</secuencial>
+                <dirMatriz>${data.details.direccion}</dirMatriz>
+            </infoTributaria>
+            <infoFactura>
+                <fechaEmision>${dete.toString()}</fechaEmision>
+                <dirEstablecimiento>${data.details.direccion}</dirEstablecimiento>
+                <contribuyenteEspecial>0000</contribuyenteEspecial>
+                <obligadoContabilidad>SI</obligadoContabilidad>
+                <tipoIdentificacionComprador>${data.customer.tipoDocumento}</tipoIdentificacionComprador>
+                <razonSocialComprador>${data.customer.razonSocial}</razonSocialComprador>
+                <identificacionComprador>${data.customer.id}</identificacionComprador>
+                <totalSinImpuestos>${parseFloat(totalValue(table))}</totalSinImpuestos>
+                <totalDescuento>${parseFloat(totalValue(table,'discount'))}</totalDescuento>
+                <totalConImpuestos>
+                    <totalImpuesto>
+                        <codigo>${data.tax.codigoTax}</codigo>
+                        <codigoPorcentaje>${data.tax.tarifa}</codigoPorcentaje>
+                        <baseImponible>${data.tax.imponible}</baseImponible>
+                        <valor>${data.tax.valor}</valor>
+                    </totalImpuesto>
+                </totalConImpuestos>
+                <propina>${data.tax.propina}</propina>   
+                <importeTotal>${data.tax.imponible}</importeTotal>
+                <moneda>${data.tax.moneda}</moneda>
+            </infoFactura>
+            <detalles>`
+
+    table.forEach((element,index) => {
+
+        xml += `<detalle>
+                <codigoPrincipal>${element.code}</codigoPrincipal>
+                <descripcion>${element.description}</descripcion>
+                <cantidad>${element.quantity}</cantidad>
+                <precioUnitario>${parseFloat(element.unit_Price)}</precioUnitario>
+                <descuento>${parseFloat(element.discount)}</descuento>
+                <precioTotalSinImpuesto>${element.total}</precioTotalSinImpuesto>
+                <impuestos>
+                    <impuesto>
+                        <codigo>${element.iva}</codigo>   
+                        <codigoPorcentaje>${element.codigos_impuestos}</codigoPorcentaje>
+                        <tarifa>${element.tarifa}</tarifa>
+                        <baseImponible>0.00</baseImponible>
+                        <valor>0.00</valor>
+                    </impuesto>
+                </impuestos>            
+            </detalle>`
+    })
+
+    //Final
+    xml += `</detalles>
+            <infoAdicional>
+                <campoAdicional nombre="Lugar Entrega">LUGAR DE ENTREGA DEL PRODUCTO O SERVICIO</campoAdicional>
+                <campoAdicional nombre="Observaciones">OBSERVACIONES ADICIONALES</campoAdicional>
+            </infoAdicional>
+        </factura>`
+
+    return xml
+}
 
 const singXml = (xml) =>{
 
@@ -42,8 +207,8 @@ const singXml = (xml) =>{
     }
 
 
-    const PASSWORD = ''
-    const SINGP12 = fs.readFileSync(path.join(__dirname,`../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
+    const PASSWORD   = ''
+    const SINGP12    = fs.readFileSync(path.join(__dirname,`../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
     const arrayUint8 = new Uint8Array(SINGP12)
     const p12B64     = forge.util.binary.base64.encode(arrayUint8)
     const p12Der     = forge.util.decode64(p12B64)
@@ -192,7 +357,7 @@ const singXml = (xml) =>{
                 KeyInfo += '\n<ds:Exponent>'
 
                     //KeyInfo += 'AQAB';
-                    KeyInfo += exponent;
+                    KeyInfo += 'AQAB'
 
                 KeyInfo += '</ds:Exponent>'
             KeyInfo += '\n</ds:RSAKeyValue>'
@@ -289,121 +454,11 @@ const singXml = (xml) =>{
 
 }
 
-const xlmBill = ({tax, details,product}) =>{
-    //Informalcion Tributaria
-    const {
-        ambiente,
-        tipoEmision,
-        razonSocial, 
-        nombreComercial,
-        ruc,
-        claveAcceso,
-        codDoc,
-        estab, 
-        ptoEmi,
-        secuencial,
-        dirMatriz,
-    } = tax
-    
-    //Detalle de la factura
-    const {
-        fechaEmision,
-        dirEstablecimiento,
-        contribuyenteEspecial, 
-        obligadoContabilidad,
-        tipoIdentificacionComprador,
-        razonSocialComprador,
-        identificacionComprador,
-        totalSinImpuestos, 
-        totalDescuento,
-        propina,
-        importeTotal,
-        moneda
-    } = details
-
-    let xlm = `
-        <?xml version="1.0" encoding="UTF-8"?>
-        <factura id="${1005}" version="1.1.0">
-            <infoTributaria>
-                <ambiente>${ambiente}</ambiente>
-                <tipoEmision>${tipoEmision}</tipoEmision>
-                <razonSocial>${razonSocial}</razonSocial>
-                <nombreComercial>${nombreComercial}</nombreComercial>
-                <ruc>${ruc}</ruc>
-                <claveAcceso>${claveAcceso}</claveAcceso>
-                <codDoc>${codDoc}</codDoc>
-                <estab>${estab}</estab>
-                <ptoEmi>${ptoEmi}</ptoEmi>
-                <secuencial>${secuencial}</secuencial>
-                <dirMatriz>${dirMatriz}</dirMatriz>
-            </infoTributaria>
-            <infoFactura>
-                <fechaEmision>${new Date().toString()}</fechaEmision>
-                <dirEstablecimiento>${dirEstablecimiento}</dirEstablecimiento>
-                <contribuyenteEspecial>${contribuyenteEspecial}</contribuyenteEspecial>
-                <obligadoContabilidad>${obligadoContabilidad}</obligadoContabilidad>
-                <tipoIdentificacionComprador>${tipoIdentificacionComprador}</tipoIdentificacionComprador>
-                <razonSocialComprador>${razonSocialComprador}</razonSocialComprador>
-                <identificacionComprador>${identificacionComprador}</identificacionComprador>
-                <totalSinImpuestos>${totalSinImpuestos}</totalSinImpuestos>
-                <totalDescuento>${totalDescuento}</totalDescuento>
-                <totalConImpuestos>
-                    <totalImpuesto>
-                        <codigo>000</codigo>
-                        <codigoPorcentaje>${moneda}</codigoPorcentaje>
-                        <baseImponible>${importeTotal}</baseImponible>
-                        <valor>${propina}</valor>
-                    </totalImpuesto>
-                </totalConImpuestos>
-                <propina>${propina}</propina>
-                <importeTotal>${importeTotal}</importeTotal>
-                <moneda>${moneda}</moneda>
-            </infoFactura>
-            <detalles>
-    `
-    
-    product.forEach((element,index) => {
-
-        xlm += `
-            <detalle>
-                <codigoPrincipal>${element.nombre}</codigoPrincipal>
-                <descripcion>${element.descripcion}</descripcion>
-                <cantidad>${element.cantidad}</cantidad>
-                <precioUnitario>${element.preciou}</precioUnitario>
-                <descuento>${element.cantidad_descuento}</descuento>
-                <precioTotalSinImpuesto>${element.codigos_impuestos}</precioTotalSinImpuesto>
-                <impuestos>
-                    <impuesto>
-                        <codigo>${element.codigos_impuestos}</codigo>
-                        <codigoPorcentaje>${element.cantidad_descuento}</codigoPorcentaje>
-                        <tarifa>${element.preciou}</tarifa>
-                        <baseImponible>${element.iva}</baseImponible>
-                        <valor>${element.cantidad_descuento}</valor>
-                    </impuesto>
-                </impuestos>            
-            </detalle>
-        `
-    })
+/*  */
 
 
-    //Se genera 
-    xlm += `
-            </detalles>
-            <infoAdicional>
-                <campoAdicional nombre="Lugar Entrega">LUGAR DE ENTREGA DEL PRODUCTO O SERVICIO</campoAdicional>
-                <campoAdicional nombre="Observaciones">OBSERVACIONES ADICIONALES</campoAdicional>
-            </infoAdicional>
-        </factura>
-    `
-
-    return singXml(xlm)
-}
-
-const invoiceDatadd = (bill) =>{
-    pdfBill(bill)
-    return xlmBill(bill)    
-}
 
 module.exports = {
-    invoiceData
+    createXMl,
+    singXml
 }
