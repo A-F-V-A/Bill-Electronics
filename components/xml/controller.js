@@ -1,6 +1,6 @@
 /* Modules */
 const fs            = require('fs')
-const forge         = require ( 'node-forge' ) ;
+const forge         = require ( 'node-forge' ) 
 const path          = require('path')
 const moment        = require('moment'); 
 
@@ -172,7 +172,7 @@ const createXMl = data =>{
             </infoAdicional>
         </factura>`
 
-    return xml
+    return [xml,key] 
 }
 
 const singXml = (xml) =>{
@@ -453,10 +453,6 @@ const singXml = (xml) =>{
     return  xml.replace(/(<[^<]+)$/, xades_bes + '$1');
 
 }
-
-/*  */
-
-
 
 module.exports = {
     createXMl,
