@@ -11,7 +11,7 @@ const { URL }                  = require('./routes')
 
 const invoiceData = async data =>{
     const [xml, key]  =  createXMl(data)
-    const sing =  singXml(xml)
+    const sing =  await singXml(xml,'../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12','13061994')
 
     
     let state = ''
