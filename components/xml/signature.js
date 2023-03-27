@@ -11,7 +11,7 @@ const {
 const crypto            = require('crypto');
 
 const sha1_base64 = value => {
-	const sha1 = crypto.createHash('sha1');
+	const sha1 = crypto.createHash('sha256');
 	sha1.update(value);
 	const hash = sha1.digest('base64');
 	return hash;
@@ -75,6 +75,8 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 
 			const X509DER  = forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes()
 			const X509HASH = sha1_base64(X509DER)
+
+
 
 			resolve({
 				CERT_PEM 		: certPem,

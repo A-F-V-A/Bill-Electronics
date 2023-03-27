@@ -182,7 +182,7 @@ const createXMl = data => {
 
 const singXml = async xml =>{
     const sha1_base64 = value => {
-        const sha1 = crypto.createHash('sha1');
+        const sha1 = crypto.createHash('sha256');
         sha1.update(value);
         const hash = sha1.digest('base64');
         return hash;
@@ -292,9 +292,9 @@ const singXml = async xml =>{
     SignedProperties += '</etsi:SignedDataObjectProperties>'
     SignedProperties += '</etsi:SignedProperties>'
 
-   // let SignedProperties_para_hash = SignedProperties.replace('<etsi:SignedProperties', '<etsi:SignedProperties ' + xmlns)
+    let SignedProperties_para_hash = SignedProperties.replace('<etsi:SignedProperties', '<etsi:SignedProperties ' + xmlns)
 
-    const sha1_SignedProperties = sha1_base64(SignedProperties)
+    const sha1_SignedProperties = sha1_base64(SignedProperties_para_hash)
 
     let KeyInfo = ''
 
@@ -324,9 +324,9 @@ const singXml = async xml =>{
     KeyInfo += '\n</ds:KeyValue>'
     KeyInfo += '\n</ds:KeyInfo>'
 
-   // let KeyInfo_para_hash = KeyInfo.replace('<ds:KeyInfo', '<ds:KeyInfo ' + xmlns)
+   let KeyInfo_para_hash = KeyInfo.replace('<ds:KeyInfo', '<ds:KeyInfo ' + xmlns)
 
-    const sha1_certificado = sha1_base64(KeyInfo)
+    const sha1_certificado = sha1_base64(KeyInfo_para_hash)
 
 
     let SignedInfo = ''
