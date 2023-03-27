@@ -26,6 +26,7 @@
   "dependencies": {
     "body-parser": "^1.20.2",
     "bufferjs": "^3.0.1",
+    "cheerio": "^1.0.0-rc.12",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-ejs-layouts": "^2.5.1",
@@ -40,6 +41,7 @@
     "xml-crypto": "^3.0.1",
     "xml2js": "^0.4.23",
     "xmldom": "^0.6.0",
+    "xmldsigjs": "^2.5.1",
     "xpath": "^0.0.32"
   },
   "devDependencies": {

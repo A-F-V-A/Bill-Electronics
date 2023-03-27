@@ -1,14 +1,18 @@
 /* Modules */
-const fs = require('fs')
-const forge = require('node-forge')
-const path = require('path')
-const moment = require('moment')
-const crypto = require('crypto')
-const { SignedXml, FileKeyInfo } = require('xml-crypto'); 
+const fs        = require('fs')
+const forge     = require('node-forge')
+const path      = require('path')
+const moment    = require('moment')
+const crypto    = require('crypto')
+
+
 
 /* Component */
-const { pdfBill } = require('../pdf/controller')
-const { Console } = require('console')
+const { 
+	SignatureValue,
+	CERTICATE_DIGITAL
+}                 = require('./signature')
+
 
 
 const AMBIENTE = 1
@@ -176,144 +180,77 @@ const createXMl = data => {
     return [xml, key]
 }
 
-const singXml = (xml) => {
-
-    //Funcion de utilidad
-
+const singXml = async xml =>{
     const sha1_base64 = value => {
         const sha1 = crypto.createHash('sha1');
         sha1.update(value);
         const hash = sha1.digest('base64');
         return hash;
     }
-
-    const hexToBase64 = str => {
-        if (!/^[0-9A-Fa-f]+$/.test(str)) {
-            throw new Error("La entrada no es una cadena hexadecimal válida.");
-        }
-
-        const bytes = str.length % 2 ? '0' + str : str;
-        const buffer = Buffer.from(bytes, 'hex');
-        const utf8Decoder = new TextDecoder('utf-8');
-
-        const utfString = utf8Decoder.decode(buffer);
-        const base64 = btoa(utfString);
-
-        const lines = base64.match(/.{1,76}/g);
-        const result = lines.join("\n");
-
-        return result;
-
-    }
-
+    
     const bigint2base64 = bigint => {
         const hexString = bigint.toString(16); // convierte el bigint a una cadena de caracteres hexadecimal
         const hexPairs = hexString.match(/\w{2}/g); // divide la cadena hexadecimal en pares de caracteres
         const utfChars = hexPairs.map(pair => String.fromCharCode(parseInt(pair, 16))); // convierte cada par hexadecimal en su correspondiente carácter UTF-8
         const utfString = utfChars.join(""); // une los caracteres UTF-8 en una sola cadena
         const base64 = Buffer.from(utfString, 'binary').toString('base64'); // convierte la cadena UTF-8 en base64
-
+    
         const lines = base64.match(/.{1,76}/g); // divide la cadena base64 en líneas de 76 caracteres o menos
         const result = lines.join("\n"); // une las líneas con un salto de línea entre ellas
-
+    
         return result;
     }
-
+    
     const random = () => {
         return Math.floor(Math.random() * 999000) + 990;
     }
-
-
-    const PASSWORD = ''
-    const SINGP12 = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
-    const arrayUint8 = new Uint8Array(SINGP12)
-    const p12B64 = forge.util.binary.base64.encode(arrayUint8)
-    const p12Der = forge.util.decode64(p12B64)
-    const p12Asn1 = forge.asn1.fromDer(p12Der)
-
-    const P12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, PASSWORD)
-
-   
-
-
-    const certBags = P12.getBags({ bagType: forge.pki.oids.certBag })
-    const cert = certBags[forge.oids.certBag][0].cert;
-    const pkcs8bags = P12.getBags({ bagType: forge.pki.oids.pkcs8ShroudedKeyBag })
-    const pkcs8 = pkcs8bags[forge.oids.pkcs8ShroudedKeyBag][0]
     
-   // let key = pkcs8.key || pkcs8.asn1
-    const keyBags = P12.getBags({ bagType: forge.pki.oids.pkcs8ShroudedKeyBag });
-    const keyBag = keyBags[forge.pki.oids.pkcs8ShroudedKeyBag][0];
-    const key = keyBag.key;
+    const password = ''
+    const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
+    const SING     = await CERTICATE_DIGITAL(password,p12)
+
+    /* X509 CERTIFICADO */
+    let certificateX509 = SING.CERT_PEM
+    certificateX509     = certificateX509.substring(certificateX509.indexOf('\n'))
+    certificateX509     = certificateX509.substring(0, certificateX509.indexOf('\n-----END CERTIFICATE-----'))
+    certificateX509     = certificateX509.replace(/\r?\n|\r/g, '').replace(/([^\0]{76})/g, '$1\n')
+
+    /* X509 HASH */
+    const certificateX509_der_hash = SING.X509HASH
+
+    /* X509 Serial Number */
+    const X509SerialNumber = parseInt(SING.CERT.serialNumber, 16)
+
+    /* KEY MODULES  */
+    const modulus = bigint2base64(SING.KEY.n)
+
+    /* XML */
+    const sha1_comprobante = sha1_base64(xml.replace('<?xml version="1.0" encoding="UTF-8"?>\n', ''))
+    const xmlns            = 'xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#"'
 
 
-    console.log(P12,key,keyBag)
+    /* numeros involucrados en los hash: */
 
-    const certificateX509_pem = forge.pki.certificateToPem(cert)
+    const Certificate_number       = random() //1562780 en el ejemplo del SRI
+    const Signature_number         = random() //620397 en el ejemplo del SRI
+    const SignedProperties_number  = random() //24123 en el ejemplo del SRI
 
-    let certificateX509 = certificateX509_pem;
+    /* numeros fuera de los hash: */
 
-    certificateX509 = certificateX509.substring(certificateX509.indexOf('\n'))
-    certificateX509 = certificateX509.substring(0, certificateX509.indexOf('\n-----END CERTIFICATE-----'))
-
-    certificateX509 = certificateX509.replace(/\r?\n|\r/g, '').replace(/([^\0]{76})/g, '$1\n')
-
-    /*
-        *Obtener hast
-        *Pasar certificado a formato DER y sacar su hash:
-    */
-    let certificateX509_asn1 = forge.pki.certificateToAsn1(cert)
-    let certificateX509_der = forge.asn1.toDer(certificateX509_asn1).getBytes()
-
-    let certificateX509_der_hash = sha1_base64(certificateX509_der)
-
-    //Serial Number
-    const X509SerialNumber = parseInt(cert.serialNumber, 16)
-
-    let exponent = hexToBase64(key.e.data[0].toString(16))
-    let modulus = bigint2base64(key.n)
-
-
-    const sha1_comprobante = sha1_base64(xml.replace('<?xml version="1.0" encoding="UTF-8"?>\n', ''));
-
-    const xmlns = 'xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#"';
-
-    //numeros involucrados en los hash:
-
-    //var Certificate_number = 1217155;//p_obtener_aleatorio(); //1562780 en el ejemplo del SRI
-    const Certificate_number = random() //1562780 en el ejemplo del SRI
-
-    //var Signature_number = 1021879;//p_obtener_aleatorio(); //620397 en el ejemplo del SRI
-    const Signature_number = random() //620397 en el ejemplo del SRI
-
-    //var SignedProperties_number = 1006287;//p_obtener_aleatorio(); //24123 en el ejemplo del SRI
-    const SignedProperties_number = random() //24123 en el ejemplo del SRI
-
-    //numeros fuera de los hash:
-
-    //var SignedInfo_number = 696603;//p_obtener_aleatorio(); //814463 en el ejemplo del SRI
-    const SignedInfo_number = random() //814463 en el ejemplo del SRI
-
-    //var SignedPropertiesID_number = 77625;//p_obtener_aleatorio(); //157683 en el ejemplo del SRI
+    const SignedInfo_number         = random() //814463 en el ejemplo del SRI
     const SignedPropertiesID_number = random() //157683 en el ejemplo del SRI
+    const Reference_ID_number       = random() //363558 en el ejemplo del SRI
+    const SignatureValue_number     = random() //398963 en el ejemplo del SRI
+    const Object_number             = random() //231987 en el ejemplo del SRI
 
-    //var Reference_ID_number = 235824;//p_obtener_aleatorio(); //363558 en el ejemplo del SRI
-    const Reference_ID_number = random() //363558 en el ejemplo del SRI
+    /* XLM SignedProperties */
 
-    //var SignatureValue_number = 844709;//p_obtener_aleatorio(); //398963 en el ejemplo del SRI
-    const SignatureValue_number = random() //398963 en el ejemplo del SRI
-
-    //var Object_number = 621794;//p_obtener_aleatorio(); //231987 en el ejemplo del SRI
-    const Object_number = random() //231987 en el ejemplo del SRI
-
-    // Construcion del Sing del xml
     let SignedProperties = ''
 
     SignedProperties += '<etsi:SignedProperties Id="Signature' + Signature_number + '-SignedProperties' + SignedProperties_number + '">'  //SignedProperties
     SignedProperties += '<etsi:SignedSignatureProperties>'
     SignedProperties += '<etsi:SigningTime>'
 
-    //SignedProperties += '2016-12-24T13:46:43-05:00';//moment().format('YYYY-MM-DD\THH:mm:ssZ');
     SignedProperties += moment().format('YYYY-MM-DD\THH:mm:ssZ')
 
     SignedProperties += '</etsi:SigningTime>'
@@ -353,11 +290,11 @@ const singXml = (xml) => {
     SignedProperties += '</etsi:MimeType>'
     SignedProperties += '</etsi:DataObjectFormat>'
     SignedProperties += '</etsi:SignedDataObjectProperties>'
-    SignedProperties += '</etsi:SignedProperties>' //fin SignedProperties
+    SignedProperties += '</etsi:SignedProperties>'
 
-    let SignedProperties_para_hash = SignedProperties.replace('<etsi:SignedProperties', '<etsi:SignedProperties ' + xmlns)
+   // let SignedProperties_para_hash = SignedProperties.replace('<etsi:SignedProperties', '<etsi:SignedProperties ' + xmlns)
 
-    const sha1_SignedProperties = sha1_base64(SignedProperties_para_hash)
+    const sha1_SignedProperties = sha1_base64(SignedProperties)
 
     let KeyInfo = ''
 
@@ -380,7 +317,6 @@ const singXml = (xml) => {
     KeyInfo += '\n</ds:Modulus>'
     KeyInfo += '\n<ds:Exponent>'
 
-    //KeyInfo += 'AQAB';
     KeyInfo += 'AQAB'
 
     KeyInfo += '</ds:Exponent>'
@@ -388,9 +324,9 @@ const singXml = (xml) => {
     KeyInfo += '\n</ds:KeyValue>'
     KeyInfo += '\n</ds:KeyInfo>'
 
-    let KeyInfo_para_hash = KeyInfo.replace('<ds:KeyInfo', '<ds:KeyInfo ' + xmlns)
+   // let KeyInfo_para_hash = KeyInfo.replace('<ds:KeyInfo', '<ds:KeyInfo ' + xmlns)
 
-    const sha1_certificado = sha1_base64(KeyInfo_para_hash)
+    const sha1_certificado = sha1_base64(KeyInfo)
 
 
     let SignedInfo = ''
@@ -442,19 +378,10 @@ const singXml = (xml) => {
     const md = forge.md.sha1.create()
     md.update(SignedInfo_para_firma, 'utf8')
 
-    let signature = Buffer.from(key.sign(md)).toString('base64').match(/.{1,76}/g).join("\n")
 
-/*
-    const md = forge.md.sha1.create()
-    md.update(SignedInfo_para_firma, 'utf8')
+    //console.log(SignedInfo_para_firma)
 
-    let t = key.sign(md)
-    let signature = forge.util.encode64(t);
-*/
-  
-
-
-
+    let signature = await SignatureValue(SING.PRIVATE_KEY_PEM,SING.PUBLIC_KEY_PEM,SignedInfo_para_firma)
 
     let xades_bes = ''
 
