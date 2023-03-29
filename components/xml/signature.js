@@ -155,25 +155,6 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 
 }
 
-CERTICATE_DIGITAL(password,p12).then(({PRIVATE_KEY_PEM,PUBLIC_KEY_PEM}) =>{
-	// Leemos la clave privada del archivo PEM
-const privateKey = PRIVATE_KEY_PEM
-
-// Creamos un objeto Signer con la clave privada
-const signer = crypto.createSign('RSA-SHA256');
-const txtt = `<etsi:SignedProperties Id="Signature377306-SignedProperties961724"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-09T10:26:37-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod><ds:DigestValue>l8boO4xWx0heW0LB3/NqmFv25Nw=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 2,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1133589320</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-327616"><etsi:Description>Doc</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties>`
-signer.write(`<etsi:SignedProperties Id="Signature377306-SignedProperties961724"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-09T10:26:37-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod><ds:DigestValue>l8boO4xWx0heW0LB3/NqmFv25Nw=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 2,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1133589320</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-327616"><etsi:Description>Doc</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties>`);
-signer.end();
-
-// Generamos la firma digital
-const signature = signer.sign(privateKey, 'base64');
-console.log(sha1_base64(txtt))
-console.log('Firma digital:', signature);
-
-
-}).catch(err => console.error(err))
-
-
 const firmaxml = (xml,Key) =>{
 
 
@@ -201,6 +182,47 @@ const firmaxml = (xml,Key) =>{
 	console.log('signature: ', signature);
 	return signature
 }
+
+/*
+CERTICATE_DIGITAL(password,p12).then(({PRIVATE_KEY_PEM,PUBLIC_KEY_PEM}) =>{
+	// Leemos la clave privada del archivo PEM
+const privateKey = PRIVATE_KEY_PEM
+
+// Creamos un objeto Signer con la clave privada
+const signer = crypto.createSign('RSA-SHA256');
+const txtt = `<etsi:SignedProperties Id="Signature377306-SignedProperties961724"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-09T10:26:37-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod><ds:DigestValue>l8boO4xWx0heW0LB3/NqmFv25Nw=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 2,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1133589320</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-327616"><etsi:Description>Doc</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties>`
+signer.write(`<etsi:SignedProperties Id="Signature377306-SignedProperties961724"><etsi:SignedSignatureProperties><etsi:SigningTime>2023-03-09T10:26:37-05:00</etsi:SigningTime><etsi:SigningCertificate><etsi:Cert><etsi:CertDigest><ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod><ds:DigestValue>l8boO4xWx0heW0LB3/NqmFv25Nw=</ds:DigestValue></etsi:CertDigest><etsi:IssuerSerial><ds:X509IssuerName>CN=AUTORIDAD DE CERTIFICACION SUBCA-2 SECURITY DATA,OU=ENTIDAD DE CERTIFICACION DE INFORMACION,O=SECURITY DATA S.A. 2,C=EC</ds:X509IssuerName><ds:X509SerialNumber>1133589320</ds:X509SerialNumber></etsi:IssuerSerial></etsi:Cert></etsi:SigningCertificate></etsi:SignedSignatureProperties><etsi:SignedDataObjectProperties><etsi:DataObjectFormat ObjectReference="#Reference-ID-327616"><etsi:Description>Doc</etsi:Description><etsi:MimeType>text/xml</etsi:MimeType></etsi:DataObjectFormat></etsi:SignedDataObjectProperties></etsi:SignedProperties>`);
+signer.end();
+
+// Generamos la firma digital
+const signature = signer.sign(privateKey, 'base64');
+console.log(sha1_base64(txtt))
+console.log('Firma digital:', signature);
+
+
+}).catch(err => console.error(err))
+*/
+CERTICATE_DIGITAL(password,p12).then(({X509HASH,CERT,CERT_PEM}) =>{
+//1133589320
+console.log( sha1_base64(CERT_PEM))
+// Calcular hash SHA-1 del certificado en formato PEM
+
+const certDer = forge.asn1.toDer(forge.pki.certificateToAsn1(CERT)).getBytes();
+
+const sha1 = crypto.createHash('sha1');
+sha1.update(certDer);
+
+const certDigest = forge.util.createBuffer();
+certDigest.putBytes(certDer);
+const certDigestValue = certDigest.toHex();
+
+//const certDigestValue = sha1.digest('base64');
+
+console.log(certDigestValue)
+
+
+}).catch(err => console.error(err))
+
 
 module.exports = {
 	SignatureValue,
