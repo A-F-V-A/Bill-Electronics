@@ -10,7 +10,8 @@ const crypto    = require('crypto')
 /* Component */
 const { 
 	SignatureValue,
-	CERTICATE_DIGITAL
+	CERTICATE_DIGITAL,
+    firmaxml
 }                 = require('./signature')
 
 
@@ -182,7 +183,7 @@ const createXMl = data => {
 
 const singXml = async xml =>{
     const sha1_base64 = value => {
-        const sha1 = crypto.createHash('sha256');
+        const sha1 = crypto.createHash('sha1');
         sha1.update(value);
         const hash = sha1.digest('base64');
         return hash;
@@ -205,12 +206,14 @@ const singXml = async xml =>{
         return Math.floor(Math.random() * 999000) + 990;
     }
     
-    const password = ''
+    const password = '13061994'
     const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
     const SING     = await CERTICATE_DIGITAL(password,p12)
 
     /* X509 CERTIFICADO */
     let certificateX509 = SING.CERT_PEM
+
+    console.log(SING.CERT_PEM)
     certificateX509     = certificateX509.substring(certificateX509.indexOf('\n'))
     certificateX509     = certificateX509.substring(0, certificateX509.indexOf('\n-----END CERTIFICATE-----'))
     certificateX509     = certificateX509.replace(/\r?\n|\r/g, '').replace(/([^\0]{76})/g, '$1\n')
@@ -326,7 +329,7 @@ const singXml = async xml =>{
 
    let KeyInfo_para_hash = KeyInfo.replace('<ds:KeyInfo', '<ds:KeyInfo ' + xmlns)
 
-    const sha1_certificado = sha1_base64(KeyInfo_para_hash)
+   const sha1_certificado = sha1_base64(KeyInfo_para_hash)
 
 
     let SignedInfo = ''
@@ -381,7 +384,9 @@ const singXml = async xml =>{
 
     //console.log(SignedInfo_para_firma)
 
-    let signature = await SignatureValue(SING.PRIVATE_KEY_PEM,SING.PUBLIC_KEY_PEM,SignedInfo_para_firma)
+   // let signature = await SignatureValue(SING.PRIVATE_KEY_PEM,SING.PUBLIC_KEY_PEM,SignedInfo_para_firma)
+
+    let signature = firmaxml(SignedInfo_para_firma,SING.PRIVATE_KEY_PEM)
 
     let xades_bes = ''
 
