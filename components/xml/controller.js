@@ -9,10 +9,9 @@ const crypto    = require('crypto')
 
 /* Component */
 const { 
-	SignatureValue,
-	CERTICATE_DIGITAL,
-    firmaxml
-}                 = require('./signature')
+	SHA1_BASE64,
+	CERTICATE_DIGITAL
+}                       = require('./signature')
 
 
 
@@ -181,13 +180,28 @@ const createXMl = data => {
     return [xml, key]
 }
 
+
+function p_firmar(privateKeyPem, infoAFirmar, callback){
+
+
+        const md = forge.md.sha1.create();
+        md.update(infoAFirmar, 'utf8');
+        const hash = md.digest().bytes();
+
+
+        const privateKey = forge.pki.privateKeyFromPem(privateKeyPem);
+        const signatureBytes = privateKey.sign(forge.md.sha1.create().update(hash));
+        const signatureBase64 = Buffer.from(signatureBytes).toString('base64');
+
+        // Dividir la firma en líneas de 76 caracteres y separarlas por saltos de línea
+        const signatureLines = signatureBase64.match(/.{1,76}/g).join('\n');
+        callback(signatureLines);
+    
+    
+
+}
+
 const singXml = async xml =>{
-    const sha1_base64 = value => {
-        const sha1 = crypto.createHash('sha1');
-        sha1.update(value);
-        const hash = sha1.digest('base64');
-        return hash;
-    }
     
     const bigint2base64 = bigint => {
         const hexString = bigint.toString(16); // convierte el bigint a una cadena de caracteres hexadecimal
@@ -202,9 +216,7 @@ const singXml = async xml =>{
         return result;
     }
     
-    const random = () => {
-        return Math.floor(Math.random() * 999000) + 990;
-    }
+    const random = () => Math.floor(Math.random() * 999000) + 990
     
     const password = '13061994'
     const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
@@ -228,7 +240,7 @@ const singXml = async xml =>{
     const modulus = bigint2base64(SING.KEY.n)
 
     /* XML */
-    const sha1_comprobante = sha1_base64(xml.replace('<?xml version="1.0" encoding="UTF-8"?>\n', ''))
+    const sha1_comprobante = SHA1_BASE64(xml.replace('<?xml version="1.0" encoding="UTF-8"?>\n', ''))
     const xmlns            = 'xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#"'
 
 
@@ -297,7 +309,7 @@ const singXml = async xml =>{
 
     let SignedProperties_para_hash = SignedProperties.replace('<etsi:SignedProperties', '<etsi:SignedProperties ' + xmlns)
 
-    const sha1_SignedProperties = sha1_base64(SignedProperties_para_hash)
+    const sha1_SignedProperties = SHA1_BASE64(SignedProperties_para_hash)
 
     let KeyInfo = ''
 
@@ -329,7 +341,7 @@ const singXml = async xml =>{
 
    let KeyInfo_para_hash = KeyInfo.replace('<ds:KeyInfo', '<ds:KeyInfo ' + xmlns)
 
-   const sha1_certificado = sha1_base64(KeyInfo_para_hash)
+   const sha1_certificado = SHA1_BASE64(KeyInfo_para_hash)
 
 
     let SignedInfo = ''
@@ -381,43 +393,46 @@ const singXml = async xml =>{
     const md = forge.md.sha1.create()
     md.update(SignedInfo_para_firma, 'utf8')
 
+    const xmlFIn = p_firmar(SING.PRIVATE_KEY_PEM, SignedInfo_para_firma, function(firma_SignedInfo){
+            
+        var xades_bes = '';
+        
 
-    //console.log(SignedInfo_para_firma)
+        //INICIO DE LA FIRMA DIGITAL 
+        xades_bes += '<ds:Signature ' + xmlns + ' Id="Signature' + Signature_number + '">';
+            xades_bes += '\n' + SignedInfo;
 
-   // let signature = await SignatureValue(SING.PRIVATE_KEY_PEM,SING.PUBLIC_KEY_PEM,SignedInfo_para_firma)
+            xades_bes += '\n<ds:SignatureValue Id="SignatureValue' + SignatureValue_number + '">\n';
 
-    let signature = firmaxml(SignedInfo_para_firma,SING.PRIVATE_KEY_PEM)
+                //VALOR DE LA FIRMA (ENCRIPTADO CON LA LLAVE PRIVADA DEL CERTIFICADO DIGITAL) 
+                xades_bes += firma_SignedInfo;
 
-    let xades_bes = ''
+            xades_bes += '\n</ds:SignatureValue>';
 
-    //INICIO DE LA FIRMA DIGITAL 
-    xades_bes += '<ds:Signature ' + xmlns + ' Id="Signature' + Signature_number + '">';
-    xades_bes += '\n' + SignedInfo;
+            xades_bes += '\n' + KeyInfo;
 
-    xades_bes += '\n<ds:SignatureValue Id="SignatureValue' + SignatureValue_number + '">\n';
+            xades_bes += '\n<ds:Object Id="Signature' + Signature_number + '-Object' + Object_number + '">';
+                xades_bes += '<etsi:QualifyingProperties Target="#Signature' + Signature_number + '">';
 
-    //VALOR DE LA FIRMA (ENCRIPTADO CON LA LLAVE PRIVADA DEL CERTIFICADO DIGITAL) 
-    xades_bes += signature;
+                    //ELEMENTO <etsi:SignedProperties>';
+                    xades_bes += SignedProperties;
+
+                xades_bes += '</etsi:QualifyingProperties>';
+            xades_bes += '</ds:Object>';
+        xades_bes += '</ds:Signature>';
+
+        //FIN DE LA FIRMA DIGITAL 
+
+        console.log(xades_bes)
 
 
-    xades_bes += '\n</ds:SignatureValue>';
+        return xml.replace('</factura>', xades_bes + '</factura>')
 
-    xades_bes += '\n' + KeyInfo;
+    });
 
-    xades_bes += '\n<ds:Object Id="Signature' + Signature_number + '-Object' + Object_number + '">';
-    xades_bes += '<etsi:QualifyingProperties Target="#Signature' + Signature_number + '">';
+    console.log('factura', xmlFIn)
 
-    //ELEMENTO <etsi:SignedProperties>';
-    xades_bes += SignedProperties;
-
-    xades_bes += '</etsi:QualifyingProperties>';
-    xades_bes += '</ds:Object>';
-    xades_bes += '</ds:Signature>';
-
-    //FIN DE LA FIRMA DIGITAL 
-
-    return xml.replace(/(<[^<]+)$/, xades_bes + '$1');
-
+    return xmlFIn
 }
 
 module.exports = {

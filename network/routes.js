@@ -6,7 +6,7 @@ const login    = require('../components/login/controller')
 //Logic
 const routes = server =>{
     server.use('/xmlGenereteBill',bill)
-    server.use('/login',login)
+ //   server.use('/login',login)
 }
 
 module.exports = routes
