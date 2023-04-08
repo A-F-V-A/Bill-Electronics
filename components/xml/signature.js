@@ -67,7 +67,6 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 
 }
 
-
 module.exports = {
 	CERTICATE_DIGITAL,
 	SHA1_BASE64
