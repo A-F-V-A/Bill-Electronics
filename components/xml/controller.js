@@ -13,6 +13,8 @@ const {
 	CERTICATE_DIGITAL
 }                       = require('./signature')
 
+const { xmlSing } = require('./singxml')
+
 
 
 const AMBIENTE = 1
@@ -201,7 +203,7 @@ function p_firmar(privateKeyPem, infoAFirmar, callback){
 
 }
 
-const singXml = async xml =>{
+const singXmllll = async xml =>{
     
     const bigint2base64 = bigint => {
         const hexString = bigint.toString(16); // convierte el bigint a una cadena de caracteres hexadecimal
@@ -220,7 +222,7 @@ const singXml = async xml =>{
     
     const password = '13061994'
     const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
-    const SING     = await CERTICATE_DIGITAL(password,p12)
+    const SING     = await xmlSing(password,p12)
 
     /* X509 CERTIFICADO */
     let certificateX509 = SING.CERT_PEM
@@ -432,8 +434,20 @@ const singXml = async xml =>{
 
     console.log('factura', xmlFIn)
 
+
+
     return xmlFIn
 }
+
+const singXml = async xml =>{
+
+    const password = '13061994'
+    const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
+
+    const xmls = await xmlSing(xml,password,p12)
+    return xmls
+}
+
 
 module.exports = {
     createXMl,

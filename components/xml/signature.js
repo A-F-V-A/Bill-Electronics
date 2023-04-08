@@ -1,14 +1,12 @@
 const crypto            = require('crypto')
 const forge             = require('node-forge')
-const fs                = require('fs')
-const cheerio 			= require('cheerio')
-const path              = require('path')
+//const cheerio 			= require('cheerio')
+
 
 const SHA1_BASE64 = value => {
-	const sha1 = crypto.createHash('sha1')
-	sha1.update(value)
-	const hash = sha1.digest('base64')
-	return hash
+	const md = forge.md.sha1.create()
+    md.update(value)
+    return  Buffer.from(md.digest().toHex(), 'hex').toString('base64')
 }
 
 const CERTICATE_DIGITAL = (password,sinature) =>{
@@ -36,6 +34,20 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 			const X509DER  = forge.asn1.toDer(forge.pki.certificateToAsn1(cert)).getBytes()
 			const X509HASH = SHA1_BASE64(X509DER)
 
+
+			/* X509 CERTIFICADO */
+			let certX509 = certPem
+			certX509     = certX509.substring(certX509.indexOf('\n'))
+			certX509     = certX509.substring(0, certX509.indexOf('\n-----END CERTIFICATE-----'))
+			certX509     = certX509.replace(/\r?\n|\r/g, '').replace(/([^\0]{76})/g, '$1\n')
+
+			/* Name de la firma */
+			const issuerName = cert.issuer.attributes[3].shortName + '=' + cert.issuer.attributes[3].value + ',' +
+			cert.issuer.attributes[2].shortName + '=' +cert.issuer.attributes[2].value + ',' +
+			cert.issuer.attributes[1].shortName + '=' +cert.issuer.attributes[1].value + ',' +
+			cert.issuer.attributes[0].shortName + '=' +cert.issuer.attributes[0].value
+
+	
 			resolve({
 				CERT_PEM 		: certPem,
 				PRIVATE_KEY_PEM : privateKeyPem,
@@ -43,7 +55,10 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 				CERT : cert,
 				KEY  : key,
 				X509DER,
-				X509HASH
+				X509HASH,
+				certX509,
+				issuerName
+				
 			})
 		}catch(err){
 			reject(err)
@@ -51,6 +66,7 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 	})
 
 }
+
 
 module.exports = {
 	CERTICATE_DIGITAL,
