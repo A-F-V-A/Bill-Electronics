@@ -1,6 +1,6 @@
 const moment    = require('moment')
 const forge     = require('node-forge')
-const { SHA1_BASE64, CERTICATE_DIGITAL} = require('./signature')
+const { SHA1_BASE64, CERTICATE_DIGITAL, RSA_SHA256} = require('./signature')
 
 /* Funciones de Utilidad */
 
@@ -19,13 +19,35 @@ const bigint2base64 = bigint => {
     return result
 }
 
+const vv = `<ds:SignedInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature-SignedInfo535208">
+<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></ds:CanonicalizationMethod>
+<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
+<ds:Reference Id="SignedPropertiesID958530" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature377306-SignedProperties961724">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>EraiinGZfyX2PuPAFeLmm22MMo4=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference URI="#Certificate1238044">
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>stH2jgSQDq/SUVHyAoPwmZFfnFc=</ds:DigestValue>
+</ds:Reference>
+<ds:Reference Id="Reference-ID-327616" URI="#comprobante">
+<ds:Transforms>
+<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+</ds:Transforms>
+<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+<ds:DigestValue>9wGz2AiNcYkmQNc2NvGcS+3CeTE=</ds:DigestValue>
+</ds:Reference>
+</ds:SignedInfo>`
+
 
 async function xmlSing(xml,password,p12){
     
     const SING = await CERTICATE_DIGITAL(password, p12)
     
     /* sha1 comprobante */
+
     const sha1_factura = SHA1_BASE64(xml.replace('<?xml version="1.0" encoding="UTF-8"?>\n', ''))
+
 
     /* X509 HASH */
     const certificateX509_der_hash = SING.X509HASH
@@ -111,7 +133,7 @@ async function xmlSing(xml,password,p12){
 
     const SignedProperties_para_hash = SignedProperties.replace('<etsi:SignedProperties', '<etsi:SignedProperties ' + xmlns)
 
-    const sha1_SignedProperties = SHA1_BASE64(SignedProperties_para_hash)        
+    const sha1_SignedProperties = SHA1_BASE64(SignedProperties_para_hash)   
     
     /* KeyInfo */      
 
@@ -145,7 +167,7 @@ async function xmlSing(xml,password,p12){
     const KeyInfo_para_hash = KeyInfo.replace('<ds:KeyInfo', '<ds:KeyInfo ' + xmlns)
 
     const sha1_certificado = SHA1_BASE64(KeyInfo_para_hash)
-    
+
     /* SignedInfo */
 
     let SignedInfo = '<ds:SignedInfo Id="Signature-SignedInfo' + SignedInfo_number + '">'
@@ -191,9 +213,7 @@ async function xmlSing(xml,password,p12){
 
     const SignedInfo_para_firma = SignedInfo.replace('<ds:SignedInfo', '<ds:SignedInfo ' + xmlns)
 
-    const firma_SignedInfo = p_firmar(SING.PRIVATE_KEY_PEM,SignedInfo_para_firma)
-
-    console.log(SignedProperties)
+    const firma_SignedInfo = RSA_SHA256(SignedInfo_para_firma,SING.PRIVATE_KEY_PEM)
 
     /* Construcion de la firma digital */
 
@@ -219,27 +239,15 @@ async function xmlSing(xml,password,p12){
         xades_bes += '</ds:Object>'
     xades_bes += '</ds:Signature>'
 
+    xmlFinal = xml.replace('</factura>', xades_bes + '</factura>')
 
-    return xml.replace('</factura>', xades_bes + '</factura>')
+
+    return xmlFinal
 }
 
-function p_firmar(privateKeyPem, infoAFirmar){
 
 
-    const md = forge.md.sha1.create()
-    md.update(infoAFirmar, 'utf8')
-    const hash = md.digest().bytes()
 
-
-    const privateKey = forge.pki.privateKeyFromPem(privateKeyPem)
-    const signatureBytes = privateKey.sign(forge.md.sha1.create().update(hash))
-    const signatureBase64 = Buffer.from(signatureBytes).toString('base64')
-
-    // Dividir la firma en líneas de 76 caracteres y separarlas por saltos de línea
-    const signatureLines = signatureBase64.match(/.{1,76}/g).join('\n')
-   
-    return signatureLines
-}
 
 module.exports = {
     xmlSing

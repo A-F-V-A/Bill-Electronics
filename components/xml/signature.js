@@ -9,6 +9,13 @@ const SHA1_BASE64 = value => {
     return  Buffer.from(md.digest().toHex(), 'hex').toString('base64')
 }
 
+const RSA_SHA256 = (value,privateKey) =>{
+    const signer = crypto.createSign('RSA-SHA1')
+    signer.update(value)
+    const signature = signer.sign(privateKey, 'base64')
+    return signature
+}
+
 const CERTICATE_DIGITAL = (password,sinature) =>{
 
 	return new Promise ((resolve, reject) =>{
@@ -67,8 +74,11 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 
 }
 
+
+
 module.exports = {
 	CERTICATE_DIGITAL,
-	SHA1_BASE64
+	SHA1_BASE64,
+  RSA_SHA256
 }
 

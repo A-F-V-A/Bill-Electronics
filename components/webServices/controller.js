@@ -10,6 +10,10 @@ const invoiceData = async data =>{
     const [xml, key]  =  createXMl(data)
     const sing =  await singXml(xml,'../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12','13061994')
 
+    console.log(sing)
+
+    /*
+
     const send = {
         xml: Buffer.from(sing).toString('base64') 
     }
@@ -45,6 +49,7 @@ const invoiceData = async data =>{
     })
 
     await pdfBill(data)
+    */
     return sing
 }
 
