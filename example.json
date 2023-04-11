@@ -4,7 +4,7 @@
     "nombreComercial": "PAUL JARAMILLO",
     "ruc": "0704870708001",
     "direccion": "Enrique Guerrero Portilla OE1-34 AV. Galo Plaza Lasso",
-    "comprobante": "05"
+    "comprobante": "01"
   },
   "customer": {
     "tipoDocumento": "05",
@@ -23,46 +23,13 @@
     {
       "iva": "2",
       "codigos_impuestos": "0",
-      "tarifa": "5",
-      "code": "p01572",
+      "tarifa": "0",
+      "code": "GBS199607",
       "quantity": "1.00",
-      "description": "Acer Predator Orion PO3-630-UR12",
+      "description": "PRODUCTOS ELECTRONICOS",
       "additional_details": "",
-      "unit_Price": "1.700.00",
-      "discount": ""
-    },
-    {
-      "iva": "2",
-      "codigos_impuestos": "0",
-      "tarifa": "5",
-      "code": "p0100",
-      "quantity": "1.00",
-      "description": "CPU HP OMEN I7-11700F 32GB 1TB NVIDIA RTX 3060 12GB 12GB",
-      "additional_details": "",
-      "unit_Price": "1.650.00",
-      "discount": ""
-    },
-    {
-      "iva": "2",
-      "codigos_impuestos": "0",
-      "tarifa": "5",
-      "code": "P02001",
-      "quantity": "2.00",
-      "description": "EVGA Supernova 1600 P+,80+ Platinum 1600W",
-      "additional_details": "",
-      "unit_Price": "365.00",
-      "discount": ""
-    },
-    {
-      "iva": "2",
-      "codigos_impuestos": "0",
-      "tarifa": "5",
-      "code": "P056",
-      "quantity": "2.00",
-      "description": "MSI GF65 10UE-213US GAMING LAPTOP",
-      "additional_details": "",
-      "unit_Price": "990.00",
-      "discount": ""
+      "unit_Price": "10",
+      "discount": "0.05"
     }
   ]
 }
