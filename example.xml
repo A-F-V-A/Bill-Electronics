@@ -1,114 +1,35 @@
-        
-<?xml version="1.0" encoding="UTF-8"?>
-<factura id="comprobante" version="1.0.0">
-	<infoTributaria>
-		<ambiente>1</ambiente>
-		<tipoEmision>1</tipoEmision>
-		<razonSocial>PAUL JARAMILLO</razonSocial>
-		<nombreComercial>PAUL JARAMILLO</nombreComercial>
-		<ruc>0704870708001</ruc>
-		<claveAcceso>230320230507048707080011045115511540000000001802580412</claveAcceso>
-		<codDoc>01</codDoc>
-		<estab>001</estab>
-		<ptoEmi>001</ptoEmi>
-		<secuencial>000000001</secuencial>
-		<dirMatriz>Enrique Guerrero Portilla OE1-34 AV. Galo Plaza Lasso</dirMatriz>
-	</infoTributaria>
-	<infoFactura>
-		<fechaEmision>23/03/2023</fechaEmision>
-		<dirEstablecimiento>Enrique Guerrero Portilla OE1-34 AV. Galo Plaza Lasso</dirEstablecimiento>
-		<contribuyenteEspecial>0000</contribuyenteEspecial>
-		<obligadoContabilidad>SI</obligadoContabilidad>
-		<tipoIdentificacionComprador>2</tipoIdentificacionComprador>
-		<razonSocialComprador>ANDRES FELIPE VILLARRAGA ARANGO</razonSocialComprador>
-		<identificacionComprador>1004870232</identificacionComprador>
-		<totalSinImpuestos>2713.35</totalSinImpuestos>
-		<totalDescuento>0.00</totalDescuento>
-		<totalConImpuestos>
-			<totalImpuesto>
-				<codigo>2</codigo>
-				<codigoPorcentaje>0</codigoPorcentaje>
-				<baseImponible>9.95</baseImponible>
-				<valor>0</valor>
-			</totalImpuesto>
-		</totalConImpuestos>
-		<propina>0.00</propina>
-		<importeTotal>9.95</importeTotal>
-		<moneda>DOLAR</moneda>
-	</infoFactura>
-	<detalles>
-		<detalle>
-			<codigoPrincipal>p01572</codigoPrincipal>
-			<descripcion>Acer Predator Orion PO3-630-UR12</descripcion>
-			<cantidad>1.00</cantidad>
-			<precioUnitario>1.700.00</precioUnitario>
-			<descuento>0.00</descuento>
-			<precioTotalSinImpuesto>1.70</precioTotalSinImpuesto>
-			<impuestos>
-				<impuesto>
-					<codigo>2</codigo>
-					<codigoPorcentaje>0</codigoPorcentaje>
-					<tarifa>5</tarifa>
-					<baseImponible>0.00</baseImponible>
-					<valor>0.00</valor>
-				</impuesto>
-			</impuestos>
-		</detalle>
-		<detalle>
-			<codigoPrincipal>p0100</codigoPrincipal>
-			<descripcion>CPU HP OMEN I7-11700F 32GB 1TB NVIDIA RTX 3060 12GB 12GB</descripcion>
-			<cantidad>1.00</cantidad>
-			<precioUnitario>1.650.00</precioUnitario>
-			<descuento>0.00</descuento>
-			<precioTotalSinImpuesto>1.65</precioTotalSinImpuesto>
-			<impuestos>
-				<impuesto>
-					<codigo>2</codigo>
-					<codigoPorcentaje>0</codigoPorcentaje>
-					<tarifa>5</tarifa>
-					<baseImponible>0.00</baseImponible>
-					<valor>0.00</valor>
-				</impuesto>
-			</impuestos>
-		</detalle>
-		<detalle>
-			<codigoPrincipal>P02001</codigoPrincipal>
-			<descripcion>EVGA Supernova 1600 P+,80+ Platinum 1600W</descripcion>
-			<cantidad>2.00</cantidad>
-			<precioUnitario>365.00</precioUnitario>
-			<descuento>0.00</descuento>
-			<precioTotalSinImpuesto>730.00</precioTotalSinImpuesto>
-			<impuestos>
-				<impuesto>
-					<codigo>2</codigo>
-					<codigoPorcentaje>0</codigoPorcentaje>
-					<tarifa>5</tarifa>
-					<baseImponible>0.00</baseImponible>
-					<valor>0.00</valor>
-				</impuesto>
-			</impuestos>
-		</detalle>
-		<detalle>
-			<codigoPrincipal>P056</codigoPrincipal>
-			<descripcion>MSI GF65 10UE-213US GAMING LAPTOP</descripcion>
-			<cantidad>2.00</cantidad>
-			<precioUnitario>990.00</precioUnitario>
-			<descuento>0.00</descuento>
-			<precioTotalSinImpuesto>1980.00</precioTotalSinImpuesto>
-			<impuestos>
-				<impuesto>
-					<codigo>2</codigo>
-					<codigoPorcentaje>0</codigoPorcentaje>
-					<tarifa>5</tarifa>
-					<baseImponible>0.00</baseImponible>
-					<valor>0.00</valor>
-				</impuesto>
-			</impuestos>
-		</detalle>
-	</detalles>
-	<infoAdicional>
-		<campoAdicional nombre="Lugar Entrega">LUGAR DE ENTREGA DEL PRODUCTO O SERVICIO</campoAdicional>
-		<campoAdicional nombre="Observaciones">OBSERVACIONES ADICIONALES</campoAdicional>
-	</infoAdicional>
-</factura>
-    
+{
+	"details": {
+	  "razonSocial": "PAUL JARAMILLO",
+	  "nombreComercial": "PAUL JARAMILLO",
+	  "ruc": "0704870708001",
+	  "direccion": "Enrique Guerrero Portilla OE1-34 AV. Galo Plaza Lasso",
+	  "comprobante": "01"
+	},
+	"customer": {
+	  "tipoDocumento": "05",
+	  "id": "1004870232",
+	  "razonSocial": "ANDRES FELIPE VILLARRAGA ARANGO"
+	},
+	"tax": {
+	  "codigoTax": "2",
+	  "tarifa": "0",
+	  "imponible": "9.95",
+	  "valor": "0",
+	  "moneda": "DOLAR",
+	  "propina": "0.00"
+	},
+	"product": [
+	  {
+		"iva": "2",
+		"codigos_impuestos": "0",
+		"tarifa": "0",
+		"code": "GBS199607",
+		"quantity": "1.00",
+		"description": "PRODUCTOS ELECTRONICOS",
+		"additional_details": "",
+		"unit_Price": "10",
+		"discount": "0.05"
+	  }
+	]
+  }
