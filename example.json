@@ -30,6 +30,39 @@
       "additional_details": "",
       "unit_Price": "10",
       "discount": "0.05"
+    },
+		{
+      "iva": "2",
+      "codigos_impuestos": "0",
+      "tarifa": "0",
+      "code": "GBS199607",
+      "quantity": "1.00",
+      "description": "PRODUCTOS ELECTRONICOS",
+      "additional_details": "",
+      "unit_Price": "10",
+      "discount": "0.05"
+    },
+		{
+      "iva": "2",
+      "codigos_impuestos": "0",
+      "tarifa": "0",
+      "code": "GBS199607",
+      "quantity": "1.00",
+      "description": "PRODUCTOS ELECTRONICOS",
+      "additional_details": "",
+      "unit_Price": "10",
+      "discount": "0.05"
+    },
+		{
+      "iva": "2",
+      "codigos_impuestos": "0",
+      "tarifa": "0",
+      "code": "GBS199607",
+      "quantity": "2.00",
+      "description": "PRODUCTOS ELECTRONICOS",
+      "additional_details": "",
+      "unit_Price": "10",
+      "discount": "0.05"
     }
   ]
 }

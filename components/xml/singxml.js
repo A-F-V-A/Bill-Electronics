@@ -1,8 +1,6 @@
 const moment    = require('moment')
-const forge     = require('node-forge')
 const { SHA1_BASE64, CERTICATE_DIGITAL, RSA_SHA256} = require('./signature')
-const cheerio 			= require('cheerio')
-const { DOMParser } = require('xmldom');
+const { DOMParser } = require('xmldom')
 
 /* Funciones de Utilidad */
 
@@ -20,27 +18,6 @@ const bigint2base64 = bigint => {
 
     return result
 }
-
-const vv = `<ds:SignedInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:etsi="http://uri.etsi.org/01903/v1.3.2#" Id="Signature-SignedInfo535208">
-<ds:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"></ds:CanonicalizationMethod>
-<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
-<ds:Reference Id="SignedPropertiesID958530" Type="http://uri.etsi.org/01903#SignedProperties" URI="#Signature377306-SignedProperties961724">
-<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
-<ds:DigestValue>EraiinGZfyX2PuPAFeLmm22MMo4=</ds:DigestValue>
-</ds:Reference>
-<ds:Reference URI="#Certificate1238044">
-<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
-<ds:DigestValue>stH2jgSQDq/SUVHyAoPwmZFfnFc=</ds:DigestValue>
-</ds:Reference>
-<ds:Reference Id="Reference-ID-327616" URI="#comprobante">
-<ds:Transforms>
-<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
-</ds:Transforms>
-<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
-<ds:DigestValue>9wGz2AiNcYkmQNc2NvGcS+3CeTE=</ds:DigestValue>
-</ds:Reference>
-</ds:SignedInfo>`
-
 
 async function xmlSing(xml,password,p12){
     
@@ -255,10 +232,6 @@ async function xmlSing(xml,password,p12){
 
     return xmlFinal
 }
-
-
-
-
 
 module.exports = {
     xmlSing
