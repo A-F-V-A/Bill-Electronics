@@ -12,7 +12,7 @@ const SHA1_BASE64 = value => {
 const RSA_SHA256 = (value,privateKey) =>{
     const signer = crypto.createSign('RSA-SHA1')
     signer.update(value)
-    const signature = signer.sign(privateKey, 'base64')
+    const signature = signer.sign(privateKey, 'base64').match(/.{1,76}/g).join("\n")
     return signature
 }
 

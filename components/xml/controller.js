@@ -7,6 +7,7 @@ const crypto    = require('crypto')
 
 
 
+
 /* Component */
 const { 
 	SHA1_BASE64,
@@ -73,15 +74,15 @@ function accessKey(data, dete) {
     //Tipo de comprobante
     key +=
         comprobante.toString() + ruc.toString() +
-        AMBIENTE.toString() + generarSerie() +
-        generarSecuencial('000000000') + generarCodigo() + '1'
+        AMBIENTE.toString() + '001001' +
+        generarSecuencial('000000501') + generarCodigo() + '1'
 
     return key + calcularDigitoVerificador(key.toString())
 }
 
 const createXMl = data => {
     const dete = moment().format('DD/MM/YYYY') //fecha de emision
-    const secuencial = generarSecuencial('000000000') //Genera el secuencial alatorio
+    const secuencial = generarSecuencial('000000501') //Genera el secuencial alatorio
     const key = accessKey(data, dete)
 
 
@@ -111,73 +112,71 @@ const createXMl = data => {
         })
     })
 
-    let xml = `<?xml version="1.0" encoding="UTF-8"?>
-        <factura id="comprobante" version="1.0.0">
-            <infoTributaria>
-                <ambiente>${AMBIENTE}</ambiente>
-                <tipoEmision>1</tipoEmision>
-                <razonSocial>${data.details.razonSocial}</razonSocial>
-                <nombreComercial>${data.details.nombreComercial}</nombreComercial>
-                <ruc>${data.details.ruc}</ruc>
-                <claveAcceso>${key}</claveAcceso>
-                <codDoc>01</codDoc>
-                <estab>001</estab>
-                <ptoEmi>001</ptoEmi>
-                <secuencial>${secuencial}</secuencial>
-                <dirMatriz>${data.details.direccion}</dirMatriz>
-            </infoTributaria>
-            <infoFactura>
-                <fechaEmision>${dete.toString()}</fechaEmision>
-                <dirEstablecimiento>${data.details.direccion}</dirEstablecimiento>
-                <contribuyenteEspecial>0000</contribuyenteEspecial>
-                <obligadoContabilidad>SI</obligadoContabilidad>
-                <tipoIdentificacionComprador>${data.customer.tipoDocumento}</tipoIdentificacionComprador>
-                <razonSocialComprador>${data.customer.razonSocial}</razonSocialComprador>
-                <identificacionComprador>${data.customer.id}</identificacionComprador>
-                <totalSinImpuestos>${parseFloat(totalValue(table))}</totalSinImpuestos>
-                <totalDescuento>${parseFloat(totalValue(table, 'discount'))}</totalDescuento>
-                <totalConImpuestos>
-                    <totalImpuesto>
-                        <codigo>${data.tax.codigoTax}</codigo>
-                        <codigoPorcentaje>${data.tax.tarifa}</codigoPorcentaje>
-                        <baseImponible>${data.tax.imponible}</baseImponible>
-                        <valor>${data.tax.valor}</valor>
-                    </totalImpuesto>
-                </totalConImpuestos>
-                <propina>${data.tax.propina}</propina>   
-                <importeTotal>${data.tax.imponible}</importeTotal>
-                <moneda>${data.tax.moneda}</moneda>
-            </infoFactura>
-            <detalles>`
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>'
+        xml +='\n<factura id="comprobante" version="1.0.0">'
+            xml +=`\n<infoTributaria>`
+                xml +=`\n<ambiente>${AMBIENTE}</ambiente>`
+                xml +=`\n<tipoEmision>1</tipoEmision>`
+                xml +=`\n<razonSocial>${data.details.razonSocial}</razonSocial>`
+                xml +=`\n<nombreComercial>${data.details.nombreComercial}</nombreComercial>`
+                xml +=`\n<ruc>${data.details.ruc}</ruc>`
+                xml +=`\n<claveAcceso>${key}</claveAcceso>`
+                xml +=`\n<codDoc>01</codDoc>`
+                xml +=`\n<estab>001</estab>`
+                xml +=`\n<ptoEmi>001</ptoEmi>`
+                xml +=`\n<secuencial>${secuencial}</secuencial>`
+                xml +=`\n<dirMatriz>${data.details.direccion}</dirMatriz>`
+            xml +=`\n</infoTributaria>`
+            xml +=`\n<infoFactura>`
+                xml +=`\n<fechaEmision>${dete.toString()}</fechaEmision>`
+                xml +=`\n<dirEstablecimiento>${data.details.direccion}</dirEstablecimiento>`
+                xml +=`\n<obligadoContabilidad>SI</obligadoContabilidad>`
+                xml +=`\n<tipoIdentificacionComprador>${data.customer.tipoDocumento}</tipoIdentificacionComprador>`
+                xml +=`\n<razonSocialComprador>${data.customer.razonSocial}</razonSocialComprador>`
+                xml +=`\n<identificacionComprador>${data.customer.id}</identificacionComprador>`
+                xml +=`\n<totalSinImpuestos>${parseFloat(totalValue(table))}</totalSinImpuestos>`
+                xml +=`\n<totalDescuento>${parseFloat(totalValue(table, 'discount'))}</totalDescuento>`
+                xml +=`\n<totalConImpuestos>`
+                    xml +=`\n<totalImpuesto>`
+                        xml +=`\n<codigo>${data.tax.codigoTax}</codigo>`
+                        xml +=`\n<codigoPorcentaje>${data.tax.tarifa}</codigoPorcentaje>`
+                        xml +=`\n<baseImponible>${data.tax.imponible}</baseImponible>`
+                        xml +=`\n<valor>${data.tax.valor}</valor>`
+                    xml +=`\n</totalImpuesto>`
+                xml +=`\n</totalConImpuestos>`
+                xml +=`\n<propina>${data.tax.propina}</propina> `  
+                xml +=`\n<importeTotal>${data.tax.imponible}</importeTotal>`
+                xml +=`\n<moneda>${data.tax.moneda}</moneda>`
+            xml +=`\n</infoFactura>`
+            xml +=`\n<detalles>`
 
-    table.forEach((element, index) => {
+            table.forEach((element, index) => {
+                xml +=`<detalle>`
+                    xml +=`\n<codigoPrincipal>${element.code}</codigoPrincipal>`
+                    xml +=`\n<descripcion>${element.description}</descripcion>`
+                    xml +=`\n<cantidad>${element.quantity}</cantidad>`
+                    xml +=`\n<precioUnitario>${parseFloat(element.unit_Price)}</precioUnitario>`
+                    xml +=`\n<descuento>${parseFloat(element.discount)}</descuento>`
+                    xml +=`\n<precioTotalSinImpuesto>${element.total}</precioTotalSinImpuesto>`
+                    xml +=`\n<impuestos>`
+                    xml +=`\n<impuesto>`
+                        xml +=`\n<codigo>${element.iva}</codigo>   `
+                        xml +=`\n<codigoPorcentaje>${element.codigos_impuestos}</codigoPorcentaje>`
+                        xml +=`\n<tarifa>${element.tarifa}</tarifa>`
+                        xml +=`\n<baseImponible>${element.total}</baseImponible>`
+                        xml +=`\n<valor>0.00</valor>`
+                    xml +=`\n</impuesto>`
+                    xml +=`\n</impuestos>`          
+                xml +=`\n</detalle>`
+            })
+ 
+            xml +=`\n</detalles>`
+            xml +=`\n<infoAdicional>`
+                xml +=`\n<campoAdicional nombre="Lugar Entrega">LUGAR DE ENTREGA DEL PRODUCTO O SERVICIO</campoAdicional>`
+                xml +=`\n<campoAdicional nombre="Observaciones">OBSERVACIONES ADICIONALES</campoAdicional>`
+            xml +=`\n</infoAdicional>`
+    xml +=`\n</factura>`
 
-        xml += `<detalle>
-                <codigoPrincipal>${element.code}</codigoPrincipal>
-                <descripcion>${element.description}</descripcion>
-                <cantidad>${element.quantity}</cantidad>
-                <precioUnitario>${parseFloat(element.unit_Price)}</precioUnitario>
-                <descuento>${parseFloat(element.discount)}</descuento>
-                <precioTotalSinImpuesto>${element.total}</precioTotalSinImpuesto>
-                <impuestos>
-                    <impuesto>
-                        <codigo>${element.iva}</codigo>   
-                        <codigoPorcentaje>${element.codigos_impuestos}</codigoPorcentaje>
-                        <tarifa>${element.tarifa}</tarifa>
-                        <baseImponible>0.00</baseImponible>
-                        <valor>0.00</valor>
-                    </impuesto>
-                </impuestos>            
-            </detalle>`
-    })
-
-    //Final
-    xml += `</detalles>
-            <infoAdicional>
-                <campoAdicional nombre="Lugar Entrega">LUGAR DE ENTREGA DEL PRODUCTO O SERVICIO</campoAdicional>
-                <campoAdicional nombre="Observaciones">OBSERVACIONES ADICIONALES</campoAdicional>
-            </infoAdicional>
-        </factura>`
 
     return [xml, key]
 }

@@ -8,12 +8,8 @@ const { pdfBill }              = require('../pdf/controller')
 
 const invoiceData = async data =>{
     const [xml, key]  =  createXMl(data)
-    const sing =  await singXml(xml,'../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12','13061994')
-
-    console.log(sing)
-
-    /*
-
+    const sing =  await singXml(xml)
+    
     const send = {
         xml: Buffer.from(sing).toString('base64') 
     }
@@ -39,17 +35,25 @@ const invoiceData = async data =>{
                         console.log('Autorizar comprobante')
                         if(twoErr)
                             console.error(twoErr)
-                        console.log(resTwo.RespuestaAutorizacionComprobante.autorizaciones.autorizacion)
+                        //console.log(sendR)
+                        console.log('\n')
+                        console.log(resTwo.RespuestaAutorizacionComprobante)
+                        console.log('\n')
+                      //  console.log(resTwo.RespuestaAutorizacionComprobante.autorizaciones.autorizacion.comprobante)
+                        console.log('\n')
+                        console.log(resTwo.RespuestaAutorizacionComprobante.autorizaciones.autorizacion.mensajes)
                     })  
                 })
+            }else{
+                console.log(res, res.RespuestaRecepcionComprobante.comprobantes?.comprobante)
             }
     
         })
 
     })
 
-    await pdfBill(data)
-    */
+    //await pdfBill(data)
+    
     return sing
 }
 
