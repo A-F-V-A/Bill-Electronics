@@ -3,11 +3,11 @@ const fs      = require('fs')
 const path    = require('path')
 const pdf     = require('puppeteer')
 const hbs     = require('handlebars')
+const moment  = require('moment')
 
-
-const pdfBill = async ({ product }) => {
+const pdfBill = async ({ product, details, customer },cod,inf) => {
     //Name del pdf
-    const pdfName = Math.random() + '_doc.pdf'
+    const pdfName = cod + '_doc.pdf'
     
     //productos 
     const table = []
@@ -46,7 +46,11 @@ const pdfBill = async ({ product }) => {
         product:table,
         pdfName:pdfName,
         path:`./docs/${pdfName}`,
-        template:'bill'
+        template:'bill',
+        cod,
+        details,
+        customer,
+        inf
     }
 
     await generateInvoiceHtml(pdf)
@@ -54,19 +58,15 @@ const pdfBill = async ({ product }) => {
 
 }
 
-const htmlView = (template,data) =>{
-    const html = fs.readFileSync(path.join(__dirname,`../../templates/${template}.hbs`),'utf-8')
-    const info = {  products: data }
-    return hbs.compile(html)(info)
-}
-
-const generateInvoiceHtml = async ({pdfName, product,template,path}) =>{
+const generateInvoiceHtml = async ({pdfName, product,template,path,cod,details,customer,inf}) =>{
     console.log(`generating pdf: ${pdfName} ...`)
+
     const browser = await pdf.launch()
     const page  = await browser.newPage()
 
-    //PDF HTML VIEW 
-    await page.setContent(htmlView(template,product))
+
+    await page.setContent(htmlView(template,product,cod,details,customer,inf))
+
 
     //CONFIG
     await page.emulateMediaType('screen')
@@ -79,6 +79,22 @@ const generateInvoiceHtml = async ({pdfName, product,template,path}) =>{
 
     console.log('done')
     await browser.close()
+}
+
+const htmlView = (template,data,key,details,customer,inf) =>{
+    const html = fs.readFileSync(path.join(__dirname,`../../templates/${template}.hbs`),'utf-8')
+
+    const info = { 
+        products: data,
+        key,
+        ruc:details.ruc,
+        date:moment().format('DD/MM/YYYY'),
+        dateAut:inf.fechaAutorizacion,
+        serial:inf.serial,
+        ambiente:inf.ambiente
+    }
+
+    return hbs.compile(html)(info)
 }
 
 module.exports = {

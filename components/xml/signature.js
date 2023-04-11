@@ -1,7 +1,5 @@
 const crypto            = require('crypto')
 const forge             = require('node-forge')
-//const cheerio 			= require('cheerio')
-
 
 const SHA1_BASE64 = value => {
 	const md = forge.md.sha1.create()
@@ -74,11 +72,9 @@ const CERTICATE_DIGITAL = (password,sinature) =>{
 
 }
 
-
-
 module.exports = {
 	CERTICATE_DIGITAL,
 	SHA1_BASE64,
-  RSA_SHA256
+	RSA_SHA256
 }
 

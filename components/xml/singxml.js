@@ -1,6 +1,5 @@
 const moment    = require('moment')
 const { SHA1_BASE64, CERTICATE_DIGITAL, RSA_SHA256} = require('./signature')
-const { DOMParser } = require('xmldom')
 
 /* Funciones de Utilidad */
 
@@ -22,20 +21,9 @@ const bigint2base64 = bigint => {
 async function xmlSing(xml,password,p12){
     
     const SING = await CERTICATE_DIGITAL(password, p12)
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, 'application/xml');
 
-
-    //  console.log($('factura[id="comprobante"]').toString())
-
-      //console.log(xml)
     /* sha1 comprobante */
-
-   // const sha1_factura = SHA1_BASE64(xml.replace('<?xml version="1.0" encoding="UTF-8"?>\n', ''))
     const sha1_factura = SHA1_BASE64(xml.replace('<?xml version="1.0" encoding="UTF-8"?>\n', ''))
-
-    //console.log(xml.replace('<?xml version="1.0" encoding="UTF-8"?>', ''))
-
 
     /* X509 HASH */
     const certificateX509_der_hash = SING.X509HASH

@@ -6,7 +6,7 @@ const { xmlSing } = require('./singxml')
 
 const AMBIENTE = 1
 
-const SEC = '000000511'
+const SEC = '000000524'
 
 function generarCodigo() {
     let codigo = '';
@@ -154,7 +154,7 @@ const createXMl = data => {
             xml +=`\n</infoAdicional>`
     xml +=`\n</factura>`
 
-    return [xml, key]
+    return [xml, key,secuencial]
 }
 
 const singXml = async xml =>{

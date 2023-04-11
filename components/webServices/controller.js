@@ -7,7 +7,7 @@ const { createXMl, singXml }   = require('../xml/controller')
 const { pdfBill }              = require('../pdf/controller')
 
 const invoiceData = async data =>{
-    const [xml, key]  =  createXMl(data)
+    const [xml, key, serial]  =  createXMl(data)
     const sing =  await singXml(xml)
     
     const send = { xml: Buffer.from(sing).toString('base64') }
@@ -35,7 +35,12 @@ const invoiceData = async data =>{
                                 else{
                                     const {estado:st,fechaAutorizacion, ambiente} = resTwo.RespuestaAutorizacionComprobante.autorizaciones.autorizacion
                                     console.log(`\nEstado: ${st} \nFecha de Autorizacion: ${fechaAutorizacion} \nAmbiente: ${ambiente}`)
-                                    pdfBill(data)
+                                    const inf = {
+                                        fechaAutorizacion,
+                                        ambiente,
+                                        serial
+                                    }
+                                    pdfBill(data,key,inf)
                                 }
                             })
                         }
@@ -47,7 +52,7 @@ const invoiceData = async data =>{
             })
         }
     })
-    
+
     return sing
 }
 
