@@ -37,7 +37,16 @@
     "path": "^0.12.7",
     "puppeteer": "^19.7.5",
     "soap": "^1.0.0",
-    "xpath": "^0.0.32"
+    "xpath": "^0.0.32",
+    "@adiwajshing/baileys": "4.4.0",
+    "@bot-whatsapp/bot": "latest",
+    "@bot-whatsapp/cli": "latest",
+    "@bot-whatsapp/database": "latest",
+    "@bot-whatsapp/portal": "latest",
+    "@bot-whatsapp/provider": "latest",
+    "mime-types": "2.1.35",
+    "nodemailer": "^6.9.1",
+    "wa-sticker-formatter": "4.3.2"
   },
   "devDependencies": {
     "dotenv": "^16.0.3"
