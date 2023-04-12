@@ -79,6 +79,8 @@ const generateInvoiceHtml = async ({pdfName, product,template,path,cod,details,c
 
     console.log('done')
     await browser.close()
+    const resp = await apiW(path,customer.number,customer.email)
+    console.log(resp)
 }
 
 const htmlView = (template,data,key,details,customer,inf) =>{
