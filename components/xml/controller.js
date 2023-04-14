@@ -6,7 +6,7 @@ const { xmlSing } = require('./singxml')
 
 const AMBIENTE = 1
 
-const SEC = '000000524'
+const SEC = '000000622'
 
 function generarCodigo() {
     let codigo = '';
