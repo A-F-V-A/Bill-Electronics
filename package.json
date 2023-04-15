@@ -46,7 +46,14 @@
     "@bot-whatsapp/provider": "latest",
     "mime-types": "2.1.35",
     "nodemailer": "^6.9.1",
-    "wa-sticker-formatter": "4.3.2"
+    "wa-sticker-formatter": "4.3.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "helmet": "^6.1.5",
+    "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0"
+
   },
   "devDependencies": {
     "dotenv": "^16.0.3"

@@ -12,6 +12,15 @@ const BaileysProvider = require('@bot-whatsapp/provider/baileys')
 const QRPortalWeb = require('@bot-whatsapp/portal')
 const fs = require('fs');
 
+//modulos de login
+const cors =require("cors");
+const morgan =require( "morgan");
+const helmet =require( "helmet");
+
+const usersRoutes = require( "./components/login/src/routes/user.routes"); // routes/user.routes
+const authRoutes =require( "./components/login/src/routes/auth.routes"); // routes/auth.routes
+
+
 
 const main = async () => {
     const adapterProvider = createProvider(BaileysProvider)
@@ -25,6 +34,23 @@ const main = async () => {
     app.use(bodyParser.json())
     app.use('/app',express.static('public'))
     router(app)
+
+    app.set("json spaces", 4);
+
+    // Middlewares
+    app.use(
+    cors({
+        // origin: "http://localhost:3000",
+    })
+    );
+    app.use(helmet());
+    app.use(morgan("dev"));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
+
+    // Routes
+    app.use("/api/users", usersRoutes);
+    app.use("/api/auth", authRoutes);
 
     app.post('/send-pdf-whatsapp', async (req, res) => {
         const { number, filepath, mimeType, filename } = req.body;
@@ -52,3 +78,4 @@ const main = async () => {
 }
 
 main()
+module.exports = app;
