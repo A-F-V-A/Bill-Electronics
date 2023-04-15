@@ -17,11 +17,6 @@ const cors =require("cors");
 const morgan =require( "morgan");
 const helmet =require( "helmet");
 
-const usersRoutes = require( "./components/login/src/routes/user.routes"); // routes/user.routes
-const authRoutes =require( "./components/login/src/routes/auth.routes"); // routes/auth.routes
-
-
-
 const main = async () => {
     const adapterProvider = createProvider(BaileysProvider)
 
@@ -47,10 +42,6 @@ const main = async () => {
     app.use(morgan("dev"));
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
-
-    // Routes
-    app.use("/api/users", usersRoutes);
-    app.use("/api/auth", authRoutes);
 
     app.post('/send-pdf-whatsapp', async (req, res) => {
         const { number, filepath, mimeType, filename } = req.body;
@@ -78,4 +69,3 @@ const main = async () => {
 }
 
 main()
-module.exports = app;

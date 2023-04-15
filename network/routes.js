@@ -1,12 +1,15 @@
 // Modulos
 const express = require('express')
 const bill    = require('../components/bill/network')
-//const login    = require('../components/login/controller')
+const usersRoutes = require( "../components/login/src/routes/user.routes");
+const authRoutes =require( "../components/login/src/routes/auth.routes")
 
 //Logic
 const routes = server =>{
     server.use('/xmlGenereteBill',bill)
- //   server.use('/login',login)
+     // Routes login
+    server.use("/api/users", usersRoutes);
+    server.use("/api/auth", authRoutes);
 }
 
 module.exports = routes
