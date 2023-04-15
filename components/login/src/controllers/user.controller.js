@@ -12,7 +12,7 @@ const createUser = async (req, res) => {
     });
 
     // encrypting password
-    user.password = await User.encryptPassword(user.password);
+    //user.password = await User.encryptPassword(user.password);
 
     // saving the new user
     const savedUser = await user.save();
