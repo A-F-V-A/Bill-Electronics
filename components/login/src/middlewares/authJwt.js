@@ -13,7 +13,7 @@ const verifyToken = async (req, res, next) => {
     req.userId = decoded.id;
 
     const user = await User.findById(req.userId, { password: 0 });
-    if (!user) return res.status(404).json({ message: "No user found" });
+    if (!user) return res.status().json({ message: "No user found" });
 
     next();
   } catch (error) {

@@ -16,6 +16,7 @@ const fs = require('fs');
 const cors =require("cors");
 const morgan =require( "morgan");
 const helmet =require( "helmet");
+require("./components/login/src/database");
 
 const main = async () => {
     const adapterProvider = createProvider(BaileysProvider)
@@ -29,19 +30,6 @@ const main = async () => {
     app.use(bodyParser.json())
     app.use('/app',express.static('public'))
     router(app)
-
-    app.set("json spaces", 4);
-
-    // Middlewares
-    app.use(
-    cors({
-        // origin: "http://localhost:3000",
-    })
-    );
-    app.use(helmet());
-    app.use(morgan("dev"));
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: false }));
 
     app.post('/send-pdf-whatsapp', async (req, res) => {
         const { number, filepath, mimeType, filename } = req.body;
@@ -63,8 +51,21 @@ const main = async () => {
     })
 
     const PORT = 4000
-    app.listen(PORT, () => console.log(`http://localhost:${PORT}`))   
-
+    app.set("port", PORT || 4000);
+    app.set("json spaces", 4);
+    app.listen(PORT, () => console.log(`http://localhost:${PORT}`))
+    
+    // Middlewares
+    app.use(
+    cors({
+        // origin: "http://localhost:3000",
+    })
+    );
+    app.use(helmet());
+    app.use(morgan("dev"));
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: false }));
+    
     QRPortalWeb()
 }
 
