@@ -3,12 +3,14 @@ const User = require( "../models/User.js");
 const createUser = async (req, res) => {
   try {
     const { username, email, password} = req.body;
+    const p12File = req.file && req.file.buffer;
 
     // creating a new User
     const user = new User({
       username,
       email,
-      password
+      password,
+      p12File,
     });
 
     // encrypting password

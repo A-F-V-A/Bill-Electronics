@@ -5,12 +5,15 @@ const { SECRET } = require("../config.js");
 const signupHandler = async (req, res) => {
   try {
     const { username, email, password} = req.body;
+     // obtener el archivo .p12 de la petición (si existe)
+     const p12File = req.file && req.file.buffer;
 
     // Creating a new User Object
     const newUser = new User({
       username,
       email,
       password,
+      p12File,
     });
 
     // Saving the User Object in Mongodb
