@@ -3,22 +3,29 @@ const { SECRET }= require( "../config.js");
 const User= require( "../models/User.js");
 
 
+
 const verifyToken = async (req, res, next) => {
+  let password, serial, p12File;
   let token = req.headers["x-access-token"];
 
   if (!token) return res.status(403).json({ message: "No token provided" });
 
   try {
-    const decoded = jwt.verify(token, SECRET);
-    req.userId = decoded.id;
+  const decoded = jwt.verify(token, SECRET);
+  req.userId = decoded.id;
 
-    const user = await User.findById(req.userId, { password: 0 });
-    if (!user) return res.status().json({ message: "No user found" });
+  const user = await User.findById(req.userId, { password: 0 });
+  if (!user) return res.status(404).json({ message: "No user found" });
   
-    next();
+  ({ password, serial, p12File } = user);
+  console.log('>>>>>>>>>>>', serial, password );
+  next();
   } catch (error) {
     return res.status(401).json({ message: "Unauthorized!" });
   }
 };
 
-module.exports = verifyToken;
+module.exports = verifyToken
+
+
+
