@@ -48,8 +48,7 @@ productSchema.pre("save", async function (next) {
   //user.password = hash;
   // si hay un archivo .p12 en la petición, procesarlo
   if (user.p12File && user.p12File instanceof Buffer) {
-    // guardar el archivo en la base de datos
-    user.p12File = await guardarArchivo(user.p12File);
+    return next();
   }
 
   next();

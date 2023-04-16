@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken") ;
 const User = require("../models/User.js");
 const { SECRET } = require("../config.js");
 
+
+
 const signupHandler = async (req, res) => {
   try {
     const { username, email, password} = req.body;
@@ -21,12 +23,22 @@ const signupHandler = async (req, res) => {
 
     // Create a token
     const token = jwt.sign({ id: savedUser._id }, SECRET, {
-      expiresIn: 86400, // 24 hours
+      expiresIn: 2592000, // 30 DIAS hours
     });
 
     return res.status(200).json({ token });
   } catch (error) {
     return res.status(500).json(error.message);
+  }
+};
+
+
+const getUserIdFromToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    return decoded.id;
+  } catch (err) {
+    return null;
   }
 };
 
@@ -48,14 +60,17 @@ const signinHandler = async (req, res) => {
       });
 
     const token = jwt.sign({ id: userFound._id }, SECRET, {
-      expiresIn: 86400, // 24 hours
+      expiresIn: 2592000, // 30 DIAS
     });
+    const userId = getUserIdFromToken(token);
 
-    res.json({ token });
+    res.json({ token, userId });
   } catch (error) {
     console.log(error);
   }
 };
+
+
 
 module.exports = {
   signupHandler,
