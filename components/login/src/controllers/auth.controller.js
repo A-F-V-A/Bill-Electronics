@@ -15,6 +15,7 @@ const signupHandler = async (req, res) => {
       username,
       email,
       password,
+      serial,
       p12File,
     });
 
