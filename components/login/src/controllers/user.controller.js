@@ -11,7 +11,7 @@ const createUser = async (req, res) => {
       email,
       password,
       serial,
-      p12File,
+      p12File
     });
 
     // encrypting password

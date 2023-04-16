@@ -17,7 +17,8 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     serial: {
-      type: Number, // o type: String si prefieres almacenar la ruta del archivo en vez del archivo mismo
+      type: Number,
+      required: true,
     },
     p12File: {
       type: Buffer, // o type: String si prefieres almacenar la ruta del archivo en vez del archivo mismo
