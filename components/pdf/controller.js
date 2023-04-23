@@ -58,6 +58,61 @@ const pdfBill = async ({ product, details, customer },cod,inf) => {
 
 }
 
+const pdfWithholdings =  async ({impuestos,details,customer},cod,inf) =>{
+  //Name del pdf
+  const pdfName = cod + '_doc.pdf'
+    
+  //productos 
+  const table = []
+
+
+  //Se crea el objeto de los productos dinamicos
+  impuestos.forEach(d =>{
+      table.push({       
+          code                : d.retener,
+          date_emi            : moment(inf.fechaAutorizacion).format('DD/MM/YYYY').toString(),
+          fiscal              : details.periodo_fiscal,
+          imponible           : d.base_imponible,
+          porcentaje          : d.porcentaje,
+          total               : parseFloat((d.base_imponible * d.porcentaje)/100).toFixed(2)
+      })  
+  })
+
+  //Informacion para generacion del pdf
+  const pdf = {
+      product:table,
+      pdfName:pdfName,
+      path:`./docs/${pdfName}`,
+      template:'withholdings',
+      cod,
+      details,
+      customer,
+      inf
+  }
+
+  await generateInvoiceHtml(pdf)
+}
+
+
+const pdfGuides =  async ({destinatarios,details,customer},cod,inf) =>{
+    //Name del pdf
+    const pdfName = cod + '_doc.pdf'
+      
+    //Informacion para generacion del pdf
+    const pdf = {
+        product:destinatarios,
+        pdfName:pdfName,
+        path:`./docs/${pdfName}`,
+        template:'guides',
+        cod,
+        details,
+        customer,
+        inf
+    }
+  
+    await generateInvoiceHtml(pdf)
+  }
+  
 const generateInvoiceHtml = async ({pdfName, product,template,path,cod,details,customer,inf}) =>{
     console.log(`generating pdf: ${pdfName} ...`)
 
@@ -91,12 +146,16 @@ const htmlView = (template,data,key,details,customer,inf) =>{
         date:moment().format('DD/MM/YYYY'),
         dateAut:inf.fechaAutorizacion,
         serial:inf.serial,
-        ambiente:inf.ambiente
+        ambiente:inf.ambiente,
+        customer,
+        details
     }
 
     return hbs.compile(html)(info)
 }
 
 module.exports = {
-    pdfBill
+    pdfBill,
+    pdfWithholdings,
+    pdfGuides
 }   
