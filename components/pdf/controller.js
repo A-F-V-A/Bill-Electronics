@@ -4,6 +4,8 @@ const path    = require('path')
 const pdf     = require('puppeteer')
 const hbs     = require('handlebars')
 const moment  = require('moment')
+const Enviar_PDF = require('../api_whatsapp/controller')
+
 
 const pdfBill = async ({ product, details, customer },cod,inf) => {
     //Name del pdf
@@ -134,6 +136,9 @@ const generateInvoiceHtml = async ({pdfName, product,template,path,cod,details,c
 
     console.log('done')
     await browser.close()
+    //api whatsapp
+    const resp = await Enviar_PDF(path,customer.number,customer.email)
+    console.log('RESPUESTA PDF: ', resp)
 }
 
 const htmlView = (template,data,key,details,customer,inf) =>{
