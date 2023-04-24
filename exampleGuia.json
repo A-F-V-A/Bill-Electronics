@@ -13,7 +13,9 @@
     "razonSocial": "ANDRES FELIPE VILLARRAGA ARANGO",
     "fechaIniTransporte":"23/04/2023",
     "fechaFinTransporte":"27/04/2023",
-    "placa":"MCL0827"
+    "placa":"MCL0827",
+    "email":"andresf.villarragaa@gmail.com",
+		"number":"573002167901"
   },
   "tax": {
     "codigoTax": "2",

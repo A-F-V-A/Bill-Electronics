@@ -10,7 +10,9 @@
   "customer": {
     "tipoDocumento": "05",
     "id": "1004870232",
-    "razonSocial": "ANDRES FELIPE VILLARRAGA ARANGO"
+    "razonSocial": "ANDRES FELIPE VILLARRAGA ARANGO",
+    "email":"andresf.villarragaa@gmail.com",
+		"number":"573002167901"
   },
   "tax": {
     "codigoTax": "2",

@@ -25,7 +25,7 @@ const resposeInvoice = async data =>{
     /*Consulta a database */
     const password = '13061994'
     const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
-    const SEC      = generarSecuencial('000000076')
+    const SEC      = generarSecuencial('000000079')
 
     /* logic */
     const [xml, key] = invoice(data,SEC)
@@ -71,7 +71,7 @@ const resposeWithholdings = async data =>{
         /*Consulta a database */
         const password = '13061994'
         const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
-        const SEC      = generarSecuencial('000000006')
+        const SEC      = generarSecuencial('000000007')
     
         /* logic */
         const [xml, key] = withholdings(data,SEC)
@@ -118,7 +118,7 @@ const resposeGuides = async data =>{
         /*Consulta a database */
         const password = '13061994'
         const p12      = fs.readFileSync(path.join(__dirname, `../../ANDRES_PAUL_JARAMILLO_VACA_270622123005.p12`))
-        const SEC      = generarSecuencial('000000009')
+        const SEC      = generarSecuencial('000000011')
     
         /* logic */
         const [xml, key] = guides(data,SEC)
